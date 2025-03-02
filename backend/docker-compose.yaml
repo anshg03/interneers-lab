@@ -5,8 +5,8 @@ services:
     ports:
       - '27018:27017'
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME: ${docker_username}
+      MONGO_INITDB_ROOT_PASSWORD: ${docker_password}
     volumes:
       - mongodb_data:/data/db
 
