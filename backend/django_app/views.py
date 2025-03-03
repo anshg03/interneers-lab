@@ -9,9 +9,12 @@ def success(message,status=200):
 
 
 def hello_world(request):
-    # Get 'name' from the query string, default to 'World' if missing
-    name = request.GET.get("name", "World")
+    # Get 'name' from the query string
+    name = request.GET.get("name").strip()
     #our name is only going to support letters with siz less than 10 and not empty
+    if not name:
+        return error("Invalid name. Name cannot be empty.")
+
     if len(name) >=10:
         return error("Invalid name. Length must be less than 10.")
     
