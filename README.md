@@ -299,30 +299,48 @@ This section explains how to create a Django endpoint that reads a `name` parame
 
 #### 1. Define the View Function
 
-Open your Django project’s `urls.py` (or `views.py`, depending on your structure). Below, we’ll define a function that looks for a `name` query parameter in `request.GET`:
+Open your Django project’s `urls.py` (or `views.py`, depending on your structure). Below, we’ll define a function that looks for a `name` query parameter in `request.GET`.It also ensure that name contains only letters without special character and has length less than 10:
 
 ```python
 # django_app/urls.py
 
 from django.contrib import admin
+from django.contrib import admin
 from django.urls import path
-from django.http import JsonResponse
-
-def hello_name(request):
-    """
-    A simple view that returns 'Hello, {name}' in JSON format.
-    Uses a query parameter named 'name'.
-    """
-    # Get 'name' from the query string, default to 'World' if missing
-    name = request.GET.get("name", "World")
-    return JsonResponse({"message": f"Hello, {name}!"})
+from django.http import HttpResponse
+from .import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hello/', hello_name), 
-    # Example usage: /hello/?name=Bob
-    # returns {"message": "Hello, Bob!"}
+    path('hello/',views.hello_world,name='hello_world'),
 ]
+
+```
+
+```python
+# django_app/views.py
+
+from django.http import HttpResponse,JsonResponse
+import re
+
+def error(message,status=400):
+    return JsonResponse({"error":message},status=status)
+
+def success(message,status=200):
+    return JsonResponse({"message":message},status=status)
+
+
+def hello_world(request):
+    # Get 'name' from the query string, default to 'World' if missing
+    name = request.GET.get("name", "World")
+    #our name is only going to support letters with siz less than 10 and not empty
+    if len(name) >=10:
+        return error("Invalid name. Length must be less than 10.")
+    
+    if not re.match(r"^[A-Za-z]+$", name):
+        return error("Invalid name. Only letters are allowed.")
+
+    return success( f"Hello, {name}!")
 
 ```
 ---
@@ -350,26 +368,47 @@ You should see:
 Starting development server at http://127.0.0.1:8001/
 ```
 
-#### Test the Endpoint with Postman (or Insomnia/Paw)
+#### Validating the API with different test scenarios
 
-Install a REST client like Postman (if you haven’t already).
+1) GET Request-hello/?name=Alice
 
-Create a new GET request.
-
-Enter the endpoint, for example:
-```
-http://127.0.0.1:8001/hello/?name=Bob
-```
-
-Send the request. You should see a JSON response:
+The JSON response:
 ```
 {
-  "message": "Hello, Bob!"
+  "message": "Hello, Alice!"
 }
 ```
+Status Code: 200 OK
 
-#### Congratulations! you wrote your first own API. 
+2) GET Request-hello/?name=Alice123
 
+The JSON response:
+```
+{
+    "error": "Invalid name. Only letters are allowed."
+}
+```
+Status Code: 400 Bad Request
+
+3) GET Request-hello/?name=
+
+The JSON response:
+```
+{
+    "error": "Invalid name. Name cannot be empty."
+}
+```
+Status Code: 400 Bad Request
+
+4) GET Request-hello/?name=alicebobdon
+
+The JSON response:
+```
+{
+    "error": "Invalid name. Length must be less than 10."
+}
+```
+Status Code: 400 Bad Request
 ---
 
 ### Pushing Your First Change
