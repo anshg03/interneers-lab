@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "product.apps.productConfig"
 ]
 
 MIDDLEWARE = [
@@ -73,10 +74,24 @@ WSGI_APPLICATION = "django_app.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "djongo",
+        "NAME": "interneers_lab_mongodb",
+        "ENFORCE_SCHEMA": False,
+        "CLIENT": {
+            "host": "mongodb://${docker_username}:${docker_password}@localhost:27018/admin",
+            "username": "root",
+            "password": "example",
+            "authSource": "admin",
+        },
     }
 }
 
