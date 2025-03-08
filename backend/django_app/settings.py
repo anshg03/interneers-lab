@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "product.apps.productConfig"
+    "product.apps.productConfig",
+    "rest_framework"
 ]
 
 MIDDLEWARE = [
@@ -74,27 +75,44 @@ WSGI_APPLICATION = "django_app.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 DATABASES = {
     "default": {
-        "ENGINE": "djongo",
-        "NAME": "interneers_lab_mongodb",
-        "ENFORCE_SCHEMA": False,
-        "CLIENT": {
-            "host": "mongodb://${docker_username}:${docker_password}@localhost:27018/admin",
-            "username": "root",
-            "password": "example",
-            "authSource": "admin",
-        },
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "djongo",
+#         "NAME": "interneers_lab_mongodb",
+#         "ENFORCE_SCHEMA": False,
+#         "CLIENT": {
+#             "host": "mongodb://${docker_username}:${docker_password}@localhost:27018/admin",
+#             "username": "root",
+#             "password": "example",
+#             "authSource": "admin",
+#         },
+#     }
+# }
+
+# DATABASES = {
+#     "default": {  # Use SQLite for Django's authentication & admin
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     },
+#     "mongodb": {  # Use MongoDB for other data
+#         "ENGINE": "djongo",
+#         "NAME": "interneers_lab_mongodb",
+#         "ENFORCE_SCHEMA": False,
+#         "CLIENT": {
+#             "host": "mongodb://root:example@localhost:27018/admin",
+#             "username": "root",
+#             "password": "example",
+#             "authSource": "admin",
+#         },
+#     },
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -136,3 +154,13 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORKS={
+    'DEFAULT_PERMISSON_CLASSES':[
+        'rest_framework.permissions.AllowAny',
+    ]
+}
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
+}
