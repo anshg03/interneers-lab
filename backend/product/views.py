@@ -9,95 +9,178 @@ from rest_framework import status
 from .models import Product
 from .serializers import ProductSerializer
 
-def error(message,status=400):
-    return JsonResponse({"error":message},status=status)
-
-
-products=[]
-
+products = []
 
 @api_view(['POST'])
 def createProduct(request):
+    """
+    Handles the creation of a new product.
+
+    This function processes a POST request to add a new product to the in-memory `products` list.
+    The request must contain JSON data that represents a product. The product is assigned an
+    incremental ID and then added to the list.All the feilds of Product model are validated using
+    ModelSerializer and Validate function.
+
+    Args:
+        request: An HttpRequest instance containing the JSON payload of the product.
+
+    Returns:
+        - If the product is successfully created, returns a JSON response with:
+          - A success message.
+          - The newly added product.
+          - HTTP status 201 (Created).
+        - If the provided data is invalid, returns a JSON response with:
+          - The validation errors.
+          - HTTP status 400 (Bad Request).
+    """
     data = request.data
-    print(data)
     serializer = ProductSerializer(data=data)  
     if serializer.is_valid():
         product = serializer.validated_data  
-        product["id"]=len(products)+1
-        products.append(product)
-        return Response( 
+        product["id"] = len(products) + 1
+        products.append(product) 
+        return Response(
             {"message": "Product created", "product": product},
             status=status.HTTP_201_CREATED
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['PUT','PATCH'])
-def updateProduct(request,product_id):
-    if request.method == 'PUT':
-        if 0 < product_id <= len(products):  
-            data=request.data
-            serializer=ProductSerializer(data=data)
-            if serializer.is_valid():
-                product=serializer.validated_data
-                products[product_id - 1].update(product)
-                return Response( 
-                    {"message": "Product created", "product": product},
-                    status=status.HTTP_201_CREATED
-                )
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
-    else:
-        if 0 < product_id <= len(products):  
-            data=request.data
-            serializer=ProductSerializer(data=data,partial=True)
-            if serializer.is_valid():
-                product=serializer.validated_data
-                products[product_id - 1].update(product)
-                return Response( 
-                    {"message": "Product created", "product": product},
-                    status=status.HTTP_201_CREATED
-                )
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['PUT', 'PATCH'])
+def updateProduct(request, product_id):
+    """
+    Handles updating an existing product.
+
+    This function processes a PUT or PATCH request to update a product in the `products` list.
+    All the feilds of Product model are validated using ModelSerializer and Validate function.
+    - PUT replaces all fields of the product.
+    - PATCH updates only the provided fields.
+
+    Args:
+        request: An HttpRequest instance containing the JSON payload of the updated product data.
+        product_id: The ID of the product to be updated.
+
+    Returns:
+        - If the product exists and is successfully updated, returns:
+          - A success message.
+          - The updated product.
+          - HTTP status 200 (OK).
+        - If the provided data is invalid, returns:
+          - The validation errors.
+          - HTTP status 400 (Bad Request).
+        - If the product does not exist, returns:
+          - An error message.
+          - HTTP status 404 (Not Found).
+    """
+    if 0 < product_id <= len(products):
+        data = request.data
+        serializer = ProductSerializer(data=data, partial=(request.method == 'PATCH'))
+        if serializer.is_valid():
+            product = serializer.validated_data
+            products[product_id - 1].update(product)
+            return Response(
+                {"message": "Product updated", "product": product},
+                status=status.HTTP_200_OK
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['DELETE'])
 def deleteProduct(request, product_id):
-    if 0 < product_id <= len(products): 
+    """
+    Handles deletion of a product.
+
+    This function processes a DELETE request to remove a product from the `products` list
+    based on the given product ID.
+
+    Args:
+        request: An HttpRequest instance.
+        product_id: The ID of the product to be deleted.
+
+    Returns:
+        - If the product exists and is successfully deleted, returns:
+          - A success message.
+          - The deleted product details.
+          - HTTP status 200 (OK).
+        - If the product does not exist, returns:
+          - An error message.
+          - HTTP status 404 (Not Found).
+    
+    Additionally, after deletion, the function reassigns IDs to maintain a continuous sequence.
+    """
+    if 0 < product_id <= len(products):
         deleted_product = products.pop(product_id - 1) 
         for i in range(len(products)):
-            products[i]["id"] = i + 1  
+            products[i]["id"] = i + 1
         return Response(
             {"message": "Product deleted", "deleted_product": deleted_product},
             status=status.HTTP_200_OK
-            )
+        )
     return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET'])
-def get_by_id(request,product_id):
+def get_by_id(request, product_id):
+    """
+    Retrieves a product by its ID.
+
+    This function processes a GET request to fetch the details of a product from the `products` list.
+
+    Args:
+        request: An HttpRequest instance.
+        product_id: The ID of the product to retrieve.
+
+    Returns:
+        - If the product exists, returns:
+          - The product details.
+          - HTTP status 200 (OK).
+        - If the product does not exist, returns:
+          - An error message.
+          - HTTP status 404 (Not Found).
+    """
     if 0 < product_id <= len(products):
-        return Response(products[product_id-1])
+        return Response(products[product_id - 1])  
     return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET'])
 def list_products(request):
-    try:
-        page=request.GET.get('page',1)
-        page_size=3
-        paginator=Paginator(products,page_size)
-    
-        serializer = ProductSerializer(paginator.page(page),many= True)
-        return Response(serializer.data)
-    
-    except Exception as e:
-        return Response({
-           'status':False,
-           'message':'invalid page' 
-        })
-        
-# This below is CRUD API without Django-Rest-Framework
+    """
+    Retrieves a paginated list of products.
 
+    This function processes a GET request to fetch a paginated list of products from the `products` list,
+    through page query parameter.
+    
+    Args:
+        request: An HttpRequest instance that may contain a 'page' query parameter or defaults to 1.
+
+    Returns:
+        - If the page is valid, returns:
+          - A list of products on the requested page.
+          - HTTP status 200 (OK).
+        - If the requested page is invalid, returns:
+          - An error message.
+          - HTTP status 400 (Bad Request).
+    
+    The function uses Django's `Paginator` to handle pagination with a fixed `page_size` manually being added.
+    """
+    try:
+        page = request.GET.get('page', 1) 
+        page_size = 3
+        paginator = Paginator(products, page_size) 
+
+        serializer = ProductSerializer(paginator.page(page), many=True)
+        return Response(serializer.data)
+
+    except Exception:
+        return Response({
+            'status': False,
+            'message': 'Invalid page'
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+
+# This below is CRUD API without Django-Rest-Framework
         
 # @csrf_exempt
 # def createProduct(request):

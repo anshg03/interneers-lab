@@ -13,7 +13,7 @@ class ProductSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('name cannot contain special char')
         
         
-        if 'price' in data and data['price'] < 5:
-            raise serializers.ValidationError('price should be more than 5')
+        if 'price' in data and data['price'] < 0:
+            raise serializers.ValidationError('price should be more than 0')
         
         return data
