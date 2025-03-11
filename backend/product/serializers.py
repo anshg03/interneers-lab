@@ -16,4 +16,7 @@ class ProductSerializer(serializers.ModelSerializer):
         if 'price' in data and data['price'] < 0:
             raise serializers.ValidationError('price should be more than 0')
         
+        if 'quantity' in data and data['quantity'] < 0:
+            raise serializers.ValidationError('Quantity should be more than 0')
+        
         return data

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+from mongoengine import connect
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -75,44 +75,24 @@ WSGI_APPLICATION = "django_app.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+#MongoEngine Connection
+MONGO_DB_NAME = "interneers_lab_mongodb"
+
+connect(
+    db=MONGO_DB_NAME,
+    host="mongodb://root:example@localhost:27018/interneers_lab_mongodb?authSource=admin",
+    username="root",
+    password="example",
+    authentication_source="admin",
+)
 
 # DATABASES = {
 #     "default": {
-#         "ENGINE": "djongo",
-#         "NAME": "interneers_lab_mongodb",
-#         "ENFORCE_SCHEMA": False,
-#         "CLIENT": {
-#             "host": "mongodb://${docker_username}:${docker_password}@localhost:27018/admin",
-#             "username": "root",
-#             "password": "example",
-#             "authSource": "admin",
-#         },
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
 #     }
 # }
 
-# DATABASES = {
-#     "default": {  # Use SQLite for Django's authentication & admin
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     },
-#     "mongodb": {  # Use MongoDB for other data
-#         "ENGINE": "djongo",
-#         "NAME": "interneers_lab_mongodb",
-#         "ENFORCE_SCHEMA": False,
-#         "CLIENT": {
-#             "host": "mongodb://root:example@localhost:27018/admin",
-#             "username": "root",
-#             "password": "example",
-#             "authSource": "admin",
-#         },
-#     },
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
