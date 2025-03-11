@@ -1,291 +1,340 @@
+# API Documentation
 
-# API Documentation:
+
+## Table of Contents
+
+1. [Products Collection](#products-collection)  
+   - [Product Model](#product-model)  
+
+2. [CRUD API's](#crud-apis)  
+   - [Create a New Product (POST)](#create-a-new-product-post)  
+   - [Update the Product (PUT/PATCH)](#update-the-product-putpatch)  
+   - [Delete the Product (DELETE)](#delete-the-product-delete)  
+   - [Get All Products (Using Pagination) (GET)](#get-all-products-using-pagination-get)  
+
+---
+
 
 ## Products Collection
 
-### Product Model:
- 
-The product model describes the object in JSON format using **ModelSerializer** for validation of each feild.
+### Product Model
 
-+ Model(application/json)
+The product model describes the object in JSON format using **ModelSerializer** for validation of each field.
 
++ **Model (application/json)**
+
+    ```json
     {
-      "name" : CharField (required) The name of the product
-      "description: TextField (required) The description of the product
-      "price": IntField (required) The price of the product
-      "category": CharField (required) The product belongs to which category
-      "brand": CharField (required) The brand of the poduct
-      "quantity: IntField (required) The stock of the product     remaining
+      "name": "CharField (required) The name of the product",
+      "description": "TextField (required) The description of the product",
+      "price": "IntField (required) The price of the product",
+      "category": "CharField (required) The product belongs to which category",
+      "brand": "CharField (required) The brand of the product",
+      "quantity": "IntField (required) The stock of the product remaining"
     }
+    ```
 
-All of the above feilds are required using serializers and a custom validate function is made to ensure name does'nt include special character , and the price and quantity of product cannot be negative.
+All of the above fields are required using serializers, and a custom `validate` function is made to:
+- Ensure the **name** does not include special characters.
+- Validate that **price** and **quantity** cannot be negative.
+
+---
 
 ## CRUD API's
 
-All the API endpoints are surrounded by **api_view** decorator to ensure correctness of type of method call (POST,PUT,GET..etc).
+All the API endpoints are surrounded by the `@api_view` decorator to ensure correctness of the method type (POST, PUT, GET, etc.).
 
 ### Create a New Product [POST]
 
-As soon as the product is created we assign it an id which is equal to length of array dynamically in which it is inserted(products for in memory operation).
+As soon as the product is created, we assign it an ID, which is equal to the length of the array dynamically in which it is inserted (for in-memory operations).
 
++ **URL:** `http://127.0.0.1:8001/product/create`
 
-+ Url - http://127.0.0.1:8001/product/create
++ **Request (application/json)**
 
-+ Request (application/json)
-
+    ```json
     {
-    "name": "Badminton",
-    "description": "Best purchase in market",
-    "category": "Sports",
-    "price": 5000,
-    "brand": "konex",
-    "quantity": 20
+      "name": "Badminton",
+      "description": "Best purchase in market",
+      "category": "Sports",
+      "price": 5000,
+      "brand": "Konex",
+      "quantity": 20
     }
+    ```
 
-+ Response 
++ **Response**
 
-    + Status - 201(created)
+    + **Status - 201 (Created)**
 
-    + {
-        "message": "Product created",
-        "product": {
+    ```json
+    {
+      "message": "Product created",
+      "product": {
         "name": "Badminton",
         "description": "Best purchase in market",
         "price": 5000,
         "category": "Sports",
-        "brand": "konex",
+        "brand": "Konex",
         "quantity": 20
-            }
       }
+    }
+    ```
 
 <details>
-<summary> Common errors </summary>
-<br>
+<summary>Common Errors</summary>
 
-1) Missing feild error by serializer:
+1) **Missing Field Error by Serializer:**
 
-+ Request (application/json)
-    
-    {
-    "name": "Badminton",
-    "description": "Best purchase in market",
-    "price": 5000,
-    "brand": "konex",
-    "quantity": 20
-    }
+    + **Request (application/json)**
 
-+ Response 
+        ```json
+        {
+          "name": "Badminton",
+          "description": "Best purchase in market",
+          "price": 5000,
+          "brand": "Konex",
+          "quantity": 20
+        }
+        ```
 
-    + Status - 400(Bad Request)
+    + **Response** 
 
-    + {
-        "category": [
+        + **Status - 400 (Bad Request)**
+
+        ```json
+        {
+          "category": [
             "This field is required."
-        ]
-     }
+          ]
+        }
+        ```
 
-2) Invalid quantity:
+2) **Invalid Quantity:**
 
-+ Request (application/json)
+    + **Request (application/json)**
 
-    {
-    "name": "Badminton",
-    "description": "Best purchase in market",
-    "category": "Sports",
-    "price": 5000,
-    "brand": "konex",
-    "quantity": -1
-    }
+        ```json
+        {
+          "name": "Badminton",
+          "description": "Best purchase in market",
+          "category": "Sports",
+          "price": 5000,
+          "brand": "Konex",
+          "quantity": -1
+        }
+        ```
 
-+ Response
+    + **Response**
 
-    + Status - 400(Bad Request)
+        + **Status - 400 (Bad Request)**
 
-    + {
-        "quantity": [
+        ```json
+        {
+          "quantity": [
             "Quantity should be greater than 0"
-        ]
-      }
+          ]
+        }
+        ```
 
-3) Name Containing Special Characters:
+3) **Name Containing Special Characters:**
 
-+ Request (application/json)
+    + **Request (application/json)**
 
-    {
-    "name": "Badminton@#",
-    "description": "Best purchase in market",
-    "category": "Sports",
-    "price": 5000,
-    "brand": "konex",
-    "quantity": 20
-    }
+        ```json
+        {
+          "name": "Badminton@#",
+          "description": "Best purchase in market",
+          "category": "Sports",
+          "price": 5000,
+          "brand": "Konex",
+          "quantity": 20
+        }
+        ```
 
-+ Response 
+    + **Response** 
 
-    + Status - 400(Bad Request)
-  
-    + {
-        "name": [
+        + **Status - 400 (Bad Request)**
+
+        ```json
+        {
+          "name": [
             "Name cannot contain special characters"
-        ]
-     } 
+          ]
+        }
+        ```
 
 </details>
 
+---
+
 ### Update the Product [PUT/PATCH]
 
- **PUT**   - It requires all the feilds to be specified when updating 
- **PATCH** - It supports partial updation of the feild of product model
++ **PUT** - Requires all fields to be specified when updating.
++ **PATCH** - Supports partial updating of the product model.
 
-1)  **PUT Request**
-+ Url-http://127.0.0.1:8001/product/update/1
+#### 1) PUT Request (Full Update)
 
-+ Request (application/json)
++ **URL:** `http://127.0.0.1:8001/product/update/1`
 
++ **Request (application/json)**
+
+    ```json
     {
-    "name": "Badminton",
-    "description": "Best purchase in market",
-    "category": "Sports",
-    "price": 5000,
-    "brand": "konex",
-    "quantity": 20
+      "name": "Badminton",
+      "description": "Best purchase in market",
+      "category": "Sports",
+      "price": 5000,
+      "brand": "Konex",
+      "quantity": 20
     }
+    ```
 
-+ Response 
++ **Response**
 
-    + Status - 200(OK)
+    + **Status - 200 (OK)**
 
-    +  {
-        "message": "Product updated",
-        "product": {
-            "name": "Badminton",
-            "description": "Best purchase in market",
-            "price": 5000,
-            "category": "Sports",
-            "brand": "yonex",
-            "quantity": 20
-            }
-        }
-    
-
-
-2) **PATCH Request**(Supports Partial Updation)
-+ Url-http://127.0.0.1:8001/product/update/1
-
-+ Request (application/json)
-
+    ```json
     {
-    "price": 10000,
-    "quantity": 20
+      "message": "Product updated",
+      "product": {
+        "name": "Badminton",
+        "description": "Best purchase in market",
+        "price": 5000,
+        "category": "Sports",
+        "brand": "Yonex",
+        "quantity": 20
+      }
     }
+    ```
 
-+ Response
+#### 2) PATCH Request (Partial Update)
 
-    + Status -200(OK)
++ **URL:** `http://127.0.0.1:8001/product/update/1`
 
-    + {
-        "message": "Product updated",
-        "product": {
-            "name": "Badminton",
-            "description": "Best purchase in market",
-            "price": 10000,
-            "category": "Sports",
-            "brand": "yonex",
-            "quantity": 20
-            }
-       }
++ **Request (application/json)**
+
+    ```json
+    {
+      "price": 10000,
+      "quantity": 20
+    }
+    ```
+
++ **Response**
+
+    + **Status - 200 (OK)**
+
+    ```json
+    {
+      "message": "Product updated",
+      "product": {
+        "name": "Badminton",
+        "description": "Best purchase in market",
+        "price": 10000,
+        "category": "Sports",
+        "brand": "Yonex",
+        "quantity": 20
+      }
+    }
+    ```
+
+---
 
 ### Delete the Product [DELETE]
 
-1) **Delete Request**
+#### Delete Request
 
-+ Url-http://127.0.0.1:8001/product/delete/1
++ **URL:** `http://127.0.0.1:8001/product/delete/1`
 
-+ Response 
-    
-    + Status -200(OK)
++ **Response** 
 
-    + {
-        "message": "Product deleted successfully"
-      }
+    + **Status - 200 (OK)**
 
+    ```json
+    {
+      "message": "Product deleted successfully"
+    }
+    ```
 
-### Get all products (using Pagination) [GET]
+---
 
-1) **Get Request**
+### Get All Products (Using Pagination) [GET]
 
-+ Url-http://127.0.0.1:8001/product?page=1
+#### Get Request
 
-+ Default page size has been set to 3.
++ **URL:** `http://127.0.0.1:8001/product?page=1`
++ **Default Page Size:** `3`
 
-+ Response
++ **Response**
 
-    + Status -200(OK)
+    + **Status - 200 (OK)**
 
-    + {
-        "status": true,
-        "total_pages": 2,
-        "current_page": 1,
-        "products": [
-                {
-                "name": "Pen",
-                "description": "A gel pen",
-                "price": 20,
-                "category": "Stationary",
-                "brand": "Agny",
-                "quantity": 20
-                },
-                {
-                    "name": "Phone",
-                    "description": "Best purchase in market",
-                    "price": 20000,
-                    "category": "Electronics",
-                    "brand": "Samsung",
-                    "quantity": 20
-                },
-                {
-                    "name": "ipad",
-                    "description": "Best purchase in market",
-                    "price": 100000,
-                    "category": "Electronics",
-                    "brand": "Apple",
-                    "quantity": 10
-                }
-            ]
-      }
-
-<details>
-<summary> Common errors </summary>
-<br>
-
-1) Page not an Integer
-
-    + Url-http://127.0.0.1:8001/product?page=abc
-
-    + Respose
-
-        + Status -400(Bad Request)
-
-        + {
-            "status": false,
-            "message": "Invalid page number"
-          }
-
-2) Page no. out of range
-
-    + Url-http://127.0.0.1:8001/product?page=3
-
-    + Respose
-
-        + Status -400(Bad Request)
-
-        + {
-            "status": false,
-            "message": "Page number out of  range"
-          }
+    ```json
+    {
+      "status": true,
+      "total_pages": 2,
+      "current_page": 1,
+      "products": [
+        {
+          "name": "Pen",
+          "description": "A gel pen",
+          "price": 20,
+          "category": "Stationery",
+          "brand": "Agny",
+          "quantity": 20
+        },
+        {
+          "name": "Phone",
+          "description": "Best purchase in market",
+          "price": 20000,
+          "category": "Electronics",
+          "brand": "Samsung",
+          "quantity": 20
+        },
+        {
+          "name": "iPad",
+          "description": "Best purchase in market",
+          "price": 100000,
+          "category": "Electronics",
+          "brand": "Apple",
+          "quantity": 10
+        }
+      ]
+    }
+    ```
 
 <details>
+<summary>Common Errors</summary>
 
+1) **Page Not an Integer**
 
+    + **URL:** `http://127.0.0.1:8001/product?page=abc`
 
+    + **Response**
 
+        + **Status - 400 (Bad Request)**
+
+        ```json
+        {
+          "status": false,
+          "message": "Invalid page number"
+        }
+        ```
+
+2) **Page Number Out of Range**
+
+    + **URL:** `http://127.0.0.1:8001/product?page=3`
+
+    + **Response**
+
+        + **Status - 400 (Bad Request)**
+
+        ```json
+        {
+          "status": false,
+          "message": "Page number out of range"
+        }
+        ```
+
+</details>
