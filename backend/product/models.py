@@ -1,12 +1,14 @@
-from django.db import models
+from mongoengine import Document, StringField, IntField
 
-class Product(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    price = models.IntegerField()
-    category = models.CharField(max_length=100)
-    brand = models.CharField(max_length=100)
-    quantity = models.IntegerField()
+class Product(Document):
+    name = StringField(max_length=255)
+    description = StringField()
+    price = IntField()
+    category = StringField(max_length=100)
+    brand = StringField(max_length=100)
+    quantity = IntField()
+
+    meta = {"collection": "products"} 
 
     def __str__(self):
         return self.name
