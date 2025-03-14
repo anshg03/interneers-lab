@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+from django.views.decorators.csrf import csrf_exempt
 from ..services import productServices
 
 
@@ -30,3 +30,11 @@ def get_by_id(request,product_id):
 def list_products(request):
     response,status_code=productServices.list_products(request)
     return Response(response,status=status_code)
+
+
+@csrf_exempt
+@api_view(['POST'])
+def apply_discount(request):
+    response,status_code=productServices.apply_discount(request)
+    return Response(response,status=status_code)
+

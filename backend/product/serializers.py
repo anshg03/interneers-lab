@@ -7,7 +7,8 @@ class ProductSerializer(serializers.Serializer):
     category = serializers.CharField(max_length=100)
     brand = serializers.CharField(max_length=100)
     quantity = serializers.IntegerField()
-
+    initial_quantity = serializers.IntegerField(read_only=True)
+    
     def validate(self, data):
         special_characters = "!@#$%^&*()_+=-"
         if 'name' in data and any(c in special_characters for c in data['name']):

@@ -2,6 +2,7 @@ from ..serializers import ProductSerializer
 from ..repository import productRepository
 from rest_framework import status
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
+from datetime import datetime,timezone,timedelta 
 
 def createProduct(data):
     serializer=ProductSerializer(data=data)
@@ -17,7 +18,9 @@ def updateProduct(request,data,product_id):
     if product == None:
         return {"error": "Product not found"},status.HTTP_400_BAD_REQUEST
     
-    print(request.method)
+    if "initial_quantity" in data:
+        return {"error":"Updating initial_quantity is not allowed"},status.HTTP_400_BAD_REQUEST
+    
     serializer=ProductSerializer(product,data=data,partial=(request.method == 'PATCH'))
     if serializer.is_valid():
         updated_product=productRepository.updateProduct(product,serializer.validated_data)
@@ -44,9 +47,13 @@ def getProduct(product_id):
        
 def list_products(request):
     products=productRepository.getAll()
+    print(products.count())
+    recent=int(request.GET.get('recent',products.count()))
+    
+    filtered_products=productRepository.filteredProducts(recent)
     page=request.GET.get('page',1)
     page_size=3
-    paginator=Paginator(products,page_size)
+    paginator=Paginator(filtered_products,page_size)
     
     try:
         paginated_products=paginator.page(page)
@@ -61,5 +68,29 @@ def list_products(request):
         return {"status": False,"message": "Page number out of range"},status.HTTP_404_NOT_FOUND
         
     
+def apply_discount(request):
+    data=request.data
+    print(data)
+    discount_percentage = int(data.get("discount", 10))
     
+    apply_time=datetime.now(timezone.utc)-timedelta(minutes=15)
+    
+    old_products=productRepository.getOldProducts(apply_time)
+    
+    if not old_products: 
+        return {"message": "No products eligible for discount."},status.HTTP_200_OK
+    
+    products=[]
+    for product in old_products:
+        initial_price=product.price
+        new_cost=initial_price-((discount_percentage*initial_price)/100)
+        product.price=new_cost
+        new_product=productRepository.saveProduct(product)
+        products.append(ProductSerializer(new_product).data)
+        
+    return {
+            "message": f"Discount of {discount_percentage}% applied successfully.",
+            "products": products
+            },status.HTTP_200_OK
+
     
