@@ -1,13 +1,28 @@
 from rest_framework import serializers
 
+
+class CategorySerializer(serializers.Serializer):
+    title=serializers.CharField(max_length=255)
+    description = serializers.CharField()
+    
+    def validate(self,data):
+        if 'title' in data and not data['title'].strip():
+            raise serializers.ValidationError("Category title cannot be empty.")
+        
+        if 'title' in data and any(char.isdigit() for char in data['title']):
+            raise serializers.ValidationError("Category title cannot contain numbers.")
+        return data
+    
+
 class ProductSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
     description = serializers.CharField()
     price = serializers.IntegerField()
-    category = serializers.CharField(max_length=100)
+    category = CategorySerializer()
     brand = serializers.CharField(max_length=100)
     quantity = serializers.IntegerField()
     initial_quantity = serializers.IntegerField(read_only=True)
+    
     
     def validate(self, data):
         special_characters = "!@#$%^&*()_+=-"
@@ -21,18 +36,5 @@ class ProductSerializer(serializers.Serializer):
             raise serializers.ValidationError({"quantity": "Quantity should be greater than 0"})
         return data
 
-    # def create(self, validated_data):
-    #     #calls while invoking create 
-    #     from product.models import Product  
-    #     product = Product(**validated_data)
-    #     product.save()
-    #     return product
-    
-    # def update(self,instance,validated_data):
-    #     #calls while updating
-    #     for key, value in validated_data.items():
-    #         setattr(instance, key, value)
-    #     instance.save()
-    #     return instance
         
    

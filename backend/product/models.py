@@ -1,11 +1,20 @@
-from mongoengine import Document, StringField, IntField,DateTimeField
+from mongoengine import Document, StringField, IntField,DateTimeField,ReferenceField
 from datetime import datetime, timezone
+
+
+class ProductCategory(Document):
+    title=StringField(max_length=255)
+    description=StringField()
+    
+    def __str__(self):
+        return self.title
+
 
 class Product(Document):
     name = StringField(max_length=255)
     description = StringField()
     price = IntField()
-    category = StringField(max_length=100)
+    category = ReferenceField(ProductCategory)
     brand = StringField(max_length=100)
     quantity = IntField()
     initial_quantity=IntField(editable=False)
