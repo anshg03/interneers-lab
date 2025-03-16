@@ -25,5 +25,10 @@ def getAll():
 def deleteProduct(category):
     return category.delete()
 
+def getByName(title):
+    try:   
+        return ProductCategory.objects.get(title=title)
+    except ProductCategory.DoesNotExist:
+        return None
 
     

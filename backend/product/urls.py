@@ -8,11 +8,12 @@ app_name='product'
 urlpatterns = [
    #Product Paths
    path('',productController.list_products,name='list_products'),
-   path('create',productController.createProduct,name='createProduct'),
+   path('create/',productController.createProduct,name='createProduct'),
    path('<str:product_id>',productController.get_by_id,name='get_by_id'),
    path('update/<str:product_id>',productController.updateProduct,name='updateProduct'),
    path('delete/<str:product_id>',productController.deleteProduct,name='deleteProduct'),
    path('discount/',productController.apply_discount,name='apply_discount'),
+   path('product_from_category_name/<str:title>',productController.product_from_category_name,name='product_from_category_name'),
    
    #Category Path
    path('create_category/',categoryController.createCategory,name='create_category'),

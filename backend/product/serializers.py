@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from bson import ObjectId
 
 class CategorySerializer(serializers.Serializer):
     title=serializers.CharField(max_length=255)
@@ -18,7 +18,7 @@ class ProductSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
     description = serializers.CharField()
     price = serializers.IntegerField()
-    category = CategorySerializer()
+    category = serializers.CharField()
     brand = serializers.CharField(max_length=100)
     quantity = serializers.IntegerField()
     initial_quantity = serializers.IntegerField(read_only=True)
@@ -36,5 +36,14 @@ class ProductSerializer(serializers.Serializer):
             raise serializers.ValidationError({"quantity": "Quantity should be greater than 0"})
         return data
 
+    def validate_category(self, value):
+        from product.models import ProductCategory
+        if ObjectId.is_valid(value):
+            category = ProductCategory.objects(id=value).first()
+            
+        if not category:
+            raise serializers.ValidationError("Invalid category. Category does not exist.")
+
+        return category
         
    

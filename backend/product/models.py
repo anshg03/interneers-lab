@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, IntField,DateTimeField,ReferenceField
+from mongoengine import Document, StringField, IntField,DateTimeField,ReferenceField,CASCADE
 from datetime import datetime, timezone
 
 
@@ -14,7 +14,7 @@ class Product(Document):
     name = StringField(max_length=255)
     description = StringField()
     price = IntField()
-    category = ReferenceField(ProductCategory)
+    category = ReferenceField(ProductCategory,required=True,reverse_delete_rule=CASCADE)
     brand = StringField(max_length=100)
     quantity = IntField()
     initial_quantity=IntField(editable=False)

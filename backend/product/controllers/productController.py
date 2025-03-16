@@ -35,3 +35,10 @@ def apply_discount(request):
     response,status_code=productServices.apply_discount(request)
     return Response(response,status=status_code)
 
+
+@api_view(['GET'])
+def product_from_category_name(request,title):
+    response,status_code=productServices.product_from_category_name(request,title)
+    return Response(response,status=status_code)
+
+

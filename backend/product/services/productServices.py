@@ -1,10 +1,17 @@
 from ..serializers import ProductSerializer
 from ..repository import productRepository
+from ..repository import categoryRepository
 from rest_framework import status
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from datetime import datetime,timezone,timedelta 
 
 def createProduct(data):
+    category = categoryRepository.getByName(data["category"]) 
+    if category == None:
+        return {"error": "Invalid category. Category does not exist"}, status.HTTP_400_BAD_REQUEST
+    
+    data["category"] =str(category.id)
+    
     serializer=ProductSerializer(data=data)
     if serializer.is_valid():
         product = productRepository.createProduct(serializer.validated_data)
@@ -12,14 +19,20 @@ def createProduct(data):
         return {"message": "Product created", "product": serialized_product}, status.HTTP_201_CREATED  
     return serializer.errors, status.HTTP_400_BAD_REQUEST
 
+
 def updateProduct(request,data,product_id):
     product = productRepository.getId(product_id)
-    print(product)
     if product == None:
         return {"error": "Product not found"},status.HTTP_400_BAD_REQUEST
     
     if "initial_quantity" in data:
         return {"error":"Updating initial_quantity is not allowed"},status.HTTP_400_BAD_REQUEST
+    
+    if "category" in data:
+        category = categoryRepository.getByName(data["category"])
+        if category == None:
+            return {"error": "Invalid category. Category does not exist"}, status.HTTP_400_BAD_REQUEST
+        data["category"]=str(category.id)
     
     serializer=ProductSerializer(product,data=data,partial=(request.method == 'PATCH'))
     if serializer.is_valid():
@@ -37,6 +50,7 @@ def deleteProduct(product_id):
     productRepository.deleteProduct(product)
     return {"message":"Product Delete Succefully"},status.HTTP_200_OK
 
+
 def getProduct(product_id):
     product=productRepository.getId(product_id)
     if product == None:
@@ -45,9 +59,9 @@ def getProduct(product_id):
     serialized_product=ProductSerializer(product).data
     return {"product":serialized_product},status.HTTP_200_OK
        
+       
 def list_products(request):
     products=productRepository.getAll()
-    print(products.count())
     recent=int(request.GET.get('recent',products.count()))
     
     filtered_products=productRepository.filteredProducts(recent)
@@ -70,14 +84,13 @@ def list_products(request):
     
 def apply_discount(request):
     data=request.data
-    print(data)
     discount_percentage = int(data.get("discount", 10))
     
     apply_time=datetime.now(timezone.utc)-timedelta(minutes=15)
     
     old_products=productRepository.getOldProducts(apply_time)
     
-    if not old_products: 
+    if not old_products.exists(): 
         return {"message": "No products eligible for discount."},status.HTTP_200_OK
     
     products=[]
@@ -92,5 +105,15 @@ def apply_discount(request):
             "message": f"Discount of {discount_percentage}% applied successfully.",
             "products": products
             },status.HTTP_200_OK
+ 
+    
+def product_from_category_name(request,title):
+    products=productRepository.product_from_category_name(title)
+    
+    if not products:
+        return {"error":"No product exist which such category name"},status.HTTP_400_BAD_REQUEST
+    serialized_products = ProductSerializer(products, many=True).data
+    
+    return {"message":"All the product with this category name","products":serialized_products},status.HTTP_200_OK
 
     

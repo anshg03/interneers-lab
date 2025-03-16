@@ -25,8 +25,6 @@ def updateProduct(product,validated_data):
         setattr(product,key,value)
     
     product.updated_at=datetime.now(timezone.utc)
-    
-    print(product)
     product.save()
     return product
 
@@ -45,3 +43,5 @@ def getOldProducts(apply_time):
     __raw__={"$expr": {"$eq": ["$quantity", "$initial_quantity"]}}
     )
 
+def product_from_category_name(title):
+    return Product.objects.filter(category__title=title)
