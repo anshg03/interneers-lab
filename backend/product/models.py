@@ -22,7 +22,7 @@ class Product(Document):
     description = StringField()
     price = IntField()
     category = ReferenceField(ProductCategory,required=True,reverse_delete_rule=CASCADE)
-    brand = StringField(max_length=100)
+    brand = ReferenceField(ProductBrand,required=True,reverse_delete_rule=CASCADE)
     quantity = IntField()
     initial_quantity=IntField(editable=False)
     created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))

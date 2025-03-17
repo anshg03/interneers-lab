@@ -25,5 +25,9 @@ def getAll():
 def deleteProduct(brand):
     return brand.delete()
 
-
+def getByName(name):
+    try:   
+        return ProductBrand.objects.get(name=name)
+    except ProductBrand.DoesNotExist:
+        return None
     

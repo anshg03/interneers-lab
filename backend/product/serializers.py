@@ -63,5 +63,15 @@ class ProductSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid category. Category does not exist.")
 
         return category
+    
+    def validate_brand(self, value):
+        from product.models import ProductBrand
+        if ObjectId.is_valid(value):
+            brand = ProductBrand.objects(id=value).first()
+            
+        if not brand:
+            raise serializers.ValidationError("Invalid brand. Brand does not exist.")
+
+        return brand
         
    

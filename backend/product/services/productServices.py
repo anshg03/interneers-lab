@@ -1,6 +1,6 @@
 from ..serializers import ProductSerializer
 from ..repository import productRepository
-from ..repository import categoryRepository
+from ..repository import categoryRepository,brandRepository
 from rest_framework import status
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from datetime import datetime,timezone,timedelta 
@@ -9,8 +9,12 @@ def createProduct(data):
     category = categoryRepository.getByName(data["category"]) 
     if category == None:
         return {"error": "Invalid category. Category does not exist"}, status.HTTP_400_BAD_REQUEST
-    
     data["category"] =str(category.id)
+    
+    brand=brandRepository.getByName(data["brand"])
+    if brand == None:
+        return {"error": "Invalid brand. Brand does not exist"}, status.HTTP_400_BAD_REQUEST
+    data["brand"]=str(brand.id)
     
     serializer=ProductSerializer(data=data)
     if serializer.is_valid():
@@ -33,6 +37,13 @@ def updateProduct(request,data,product_id):
         if category == None:
             return {"error": "Invalid category. Category does not exist"}, status.HTTP_400_BAD_REQUEST
         data["category"]=str(category.id)
+        
+    if "brand" in data:
+        brand=brandRepository.getByName(data["brand"])
+        if brand == None:
+            return {"error": "Invalid brand. Brand does not exist"}, status.HTTP_400_BAD_REQUEST
+        data["brand"]=str(brand.id)
+        
     
     serializer=ProductSerializer(product,data=data,partial=(request.method == 'PATCH'))
     if serializer.is_valid():
