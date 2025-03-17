@@ -13,7 +13,25 @@ class CategorySerializer(serializers.Serializer):
             raise serializers.ValidationError("Category title cannot contain numbers.")
         return data
     
+class BrandSerializer(serializers.Serializer):
+    category=serializers.CharField()
+    name=serializers.CharField()
+    
+    def validate_name(self,value):
+        if not value.strip():
+            raise serializers.ValidationError("Brand name cannot be empty.")
+        return value
+    
+    def validate_category(self,value):
+        from product.models import ProductCategory
+        if ObjectId.is_valid(value):
+            category=ProductCategory.objects(id=value).first()
+        
+        if not category:
+            raise serializers.ValidationError("Invalid category. Category does not have existence.")
 
+        return category    
+        
 class ProductSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
     description = serializers.CharField()

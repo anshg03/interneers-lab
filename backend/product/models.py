@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, IntField,DateTimeField,ReferenceField,CASCADE
+from mongoengine import Document,StringField,IntField,DateTimeField,ReferenceField,CASCADE
 from datetime import datetime, timezone
 
 
@@ -9,6 +9,13 @@ class ProductCategory(Document):
     def __str__(self):
         return self.title
 
+class ProductBrand(Document):
+    category=ReferenceField(ProductCategory,required=True,reverse_delete_rule=CASCADE)
+    name=StringField()
+    
+    def __str__(self):
+        return self.name
+    
 
 class Product(Document):
     name = StringField(max_length=255)
