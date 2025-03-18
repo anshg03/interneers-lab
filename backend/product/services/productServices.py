@@ -72,10 +72,23 @@ def getProduct(product_id):
        
        
 def list_products(request):
-    products=productRepository.getAll()
-    recent=int(request.GET.get('recent',products.count()))
+    recent = int(request.GET.get("recent", productRepository.getAll().count()))
     
-    filtered_products=productRepository.filteredProducts(recent)
+    filters = {}
+
+    if "min_price" in request.GET:
+        filters["min_price"] = request.GET["min_price"]
+    if "max_price" in request.GET:
+        filters["max_price"] = request.GET["max_price"]
+    if "brand" in request.GET:
+        filters["brand"] = request.GET["brand"]
+    if "in_stock" in request.GET:
+        filters["in_stock"] = request.GET["in_stock"]
+
+    filtered_products = productRepository.filteredProducts(filters)
+    
+    filtered_products=productRepository.filteredByRecent(filtered_products,recent)
+
     page=request.GET.get('page',1)
     page_size=3
     paginator=Paginator(filtered_products,page_size)

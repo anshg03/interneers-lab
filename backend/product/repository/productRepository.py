@@ -34,9 +34,27 @@ def deleteProduct(product):
 def getAll():
     return Product.objects.all()
 
-def filteredProducts(recent):
-    return Product.objects.order_by('-created_at')[:recent]
+def filteredProducts(filters):
+    query= {}
+    
+    if "min_price" in filters:
+        query["price__gte"]=filters["min_price"]
+    if "max_price" in filters:
+        query["price__lte"] = filters["max_price"]
+    if "brand" in filters:
+        query["brand"] = filters["brand"]
+    if filters["in_stock"] == "true":
+        query["quantity__gt"] = 0  
+    elif filters["in_stock"] == "false":
+        query["quantity__lte"] = 0
+    
+    return Product.objects.filter(**query)  
 
+
+def filteredByRecent(filtered_products,recent):
+    return filtered_products.order_by('-created_at')[:recent]
+    
+           
 def getOldProducts(apply_time):
     return Product.objects.filter(
     created_at__lte=apply_time,

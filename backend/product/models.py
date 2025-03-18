@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 
 class ProductCategory(Document):
-    title=StringField(max_length=255)
+    title=StringField(max_length=255,unique=True)
     description=StringField()
     
     def __str__(self):
