@@ -1,44 +1,46 @@
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from ..services import productServices
+from ..services.productServices import ProductService 
 
 
-@api_view(['POST'])
-def createProduct(request):
-    data=request.data
-    response,status_code =productServices.createProduct(data)
-    return Response(response, status=status_code)
+class ProductCreateView(APIView):
+    def post(self, request):
+        data = request.data
+        response, status_code = ProductService.create_product(data)
+        return Response(response, status=status_code)
 
-@api_view(['PUT','PATCH'])
-def updateProduct(request,product_id):
-    data=request.data
-    response,status_code=productServices.updateProduct(request,data,product_id)
-    return Response(response,status=status_code)
+class ProductUpdateView(APIView):
+    def put(self, request, product_id):
+        data = request.data
+        response, status_code = ProductService.update_product(request, data, product_id)
+        return Response(response, status=status_code)
 
-@api_view(['DELETE'])
-def deleteProduct(request,product_id):
-    response,status_code=productServices.deleteProduct(product_id)
-    return Response(response,status=status_code)
- 
-@api_view(['GET'])
-def get_by_id(request,product_id):
-    response,status_code=productServices.getProduct(product_id)
-    return Response(response,status=status_code)
+    def patch(self, request, product_id):
+        data = request.data
+        response, status_code = ProductService.update_product(request, data, product_id)
+        return Response(response, status=status_code)
 
-@api_view(['GET'])
-def list_products(request):
-    response,status_code=productServices.list_products(request)
-    return Response(response,status=status_code)
+class ProductDeleteView(APIView):
+    def delete(self, request, product_id):
+        response, status_code = ProductService.delete_product(product_id)
+        return Response(response, status=status_code)
 
-@api_view(['POST'])
-def apply_discount(request):
-    response,status_code=productServices.apply_discount(request)
-    return Response(response,status=status_code)
+class ProductDetailView(APIView):
+    def get(self, request, product_id):
+        response, status_code = ProductService.get_product(product_id)
+        return Response(response, status=status_code)
 
+class ProductListView(APIView):
+    def get(self, request):
+        response, status_code = ProductService.list_products(request)
+        return Response(response, status=status_code)
 
-@api_view(['GET'])
-def product_from_category_name(request,title):
-    response,status_code=productServices.product_from_category_name(request,title)
-    return Response(response,status=status_code)
+class ProductDiscountView(APIView):
+    def post(self, request):
+        response, status_code = ProductService.apply_discount(request)
+        return Response(response, status=status_code)
 
-
+class ProductCategoryView(APIView):
+    def get(self, request, title):
+        response, status_code = ProductService.get_products_by_category(request, title)
+        return Response(response, status=status_code)

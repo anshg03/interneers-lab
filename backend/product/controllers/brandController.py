@@ -1,25 +1,34 @@
-from product.services import brandServices
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from ..services.brandServices import BrandService
 
-@api_view(['POST'])
-def createBrand(request):
-    data=request.data
-    response,status_code =brandServices.createBrand(data)
-    return Response(response, status=status_code)
 
-@api_view(['PUT','PATCH'])
-def updateBrand(request,brand_id):
-    data=request.data
-    response,status_code = brandServices.updateBrand(request,data,brand_id)
-    return Response(response,status=status_code)
+class BrandCreateView(APIView):
+    def post(self, request):
+        data = request.data
+        response, status_code = BrandService.create_brand(data)
+        return Response(response, status=status_code)
 
-@api_view(['DELETE'])
-def deleteBrand(request,brand_id):
-    response,status_code = brandServices.deleteBrand(brand_id)
-    return Response(response,status=status_code)
 
-@api_view(['GET'])
-def list_brand(request):
-    response,status_code = brandServices.listBrand(request)
-    return Response(response,status=status_code)
+class BrandUpdateView(APIView):
+    def put(self, request, brand_id):
+        data = request.data
+        response, status_code = BrandService.update_brand(request, data, brand_id)
+        return Response(response, status=status_code)
+
+    def patch(self, request, brand_id):
+        data = request.data
+        response, status_code = BrandService.update_brand(request, data, brand_id)
+        return Response(response, status=status_code)
+
+
+class BrandDeleteView(APIView):
+    def delete(self, request, brand_id):
+        response, status_code = BrandService.delete_brand(brand_id)
+        return Response(response, status=status_code)
+
+
+class BrandListView(APIView):
+    def get(self, request):
+        response, status_code = BrandService.list_brand(request)
+        return Response(response, status=status_code)
