@@ -1,4 +1,4 @@
-from product.models import Product
+from product.models import Product,ProductCategory
 from bson import ObjectId
 from datetime import datetime,timezone
 
@@ -73,4 +73,9 @@ class ProductRepository:
         
     @staticmethod
     def product_from_category_name(title):
-        return Product.objects.filter(category__title=title)
+        category=ProductCategory.objects.filter(title=title).first()
+        
+        if not category:
+            return []
+
+        return Product.objects.filter(category=ObjectId(category.id))
