@@ -1,57 +1,48 @@
+from typing import Dict,Type
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
+from rest_framework import status
 from ..services.productServices import ProductService 
 from product.controllers.baseCRUDController import BaseCRUDView
-
+from product.exceptions import NotFoundException,InvalidDataException
 
 class ProductView(BaseCRUDView):
-    service=ProductService
-    function_mapping = {
+    service: Type[ProductService]=ProductService
+    function_mapping : Dict[str,str]= {
         "create": "create_product",
         "retrieve": "get_product",
         "update": "update_product",
         "delete": "delete_product",
         "list": "list_products",
     }
-    
-# class ProductCreateView(APIView):
-#     def post(self, request):
-#         data = request.data
-#         response, status_code = ProductService.create_product(data)
-#         return Response(response, status=status_code)
-
-# class ProductUpdateView(APIView):
-#     def put(self, request, product_id):
-#         data = request.data
-#         response, status_code = ProductService.update_product(request, data, product_id)
-#         return Response(response, status=status_code)
-
-#     def patch(self, request, product_id):
-#         data = request.data
-#         response, status_code = ProductService.update_product(request, data, product_id)
-#         return Response(response, status=status_code)
-
-# class ProductDeleteView(APIView):
-#     def delete(self, request, product_id):
-#         response, status_code = ProductService.delete_product(product_id)
-#         return Response(response, status=status_code)
-
-# class ProductDetailView(APIView):
-#     def get(self, request, product_id):
-#         response, status_code = ProductService.get_product(product_id)
-#         return Response(response, status=status_code)
-
-# class ProductListView(APIView):
-#     def get(self, request):
-#         response, status_code = ProductService.list_products(request)
-#         return Response(response, status=status_code)
 
 class ProductDiscountView(APIView):
-    def post(self, request):
-        response, status_code = ProductService.apply_discount(request)
-        return Response(response, status=status_code)
+    def post(self, request: Request) -> Response:
+        
+        try:
+            response = ProductService.apply_discount(request.data)
+            return Response(response, status=status.HTTP_200_OK)
+        except NotFoundException as e:
+            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        except InvalidDataException as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {"error": "Something went wrong", "details": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 class ProductCategoryView(APIView):
-    def get(self, request, title):
-        response, status_code = ProductService.get_products_by_category(request, title)
-        return Response(response, status=status_code)
+    def get(self, request: Request, title: str) -> Response:
+        
+        try:
+            response = ProductService.get_products_by_category(title)
+            return Response(response, status=status.HTTP_200_OK)
+        except NotFoundException as e:
+            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response(
+                {"error": "Something went wrong", "details": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

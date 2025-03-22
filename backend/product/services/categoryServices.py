@@ -1,62 +1,70 @@
+from typing import Any, Dict, Tuple
 from ..serializers import CategorySerializer
 from product.repository.categoryRepository import CategoryRepository
 from rest_framework import status
-from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
+from rest_framework.request import Request
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from product.exceptions import InvalidDataException,NotFoundException
 
 class CategoryService:
-    
-    @staticmethod
-    def create_category(data):
-        serializer=CategorySerializer(data=data)
-        if serializer.is_valid():
-            category=CategoryRepository.create_category(serializer.validated_data)
-            serialized_category=CategorySerializer(category).data
-            return {"message": "Category created", "category": serialized_category}, status.HTTP_201_CREATED  
-        return serializer.errors, status.HTTP_400_BAD_REQUEST
 
     @staticmethod
-    def update_category(request,data,category_id):
-        category=CategoryRepository.get_id(category_id)
-        
-        if category==None:
-            return {"error":"Category not found"},status.HTTP_400_BAD_REQUEST
-        
-        serializer=CategorySerializer(category,data=data,partial=(request.method == 'PATCH'))
-        
+    def create_category(data: Dict[str, Any]) -> Dict[str, Any]:
+        serializer = CategorySerializer(data=data)
         if serializer.is_valid():
-            category=CategoryRepository.update_category(category,serializer.validated_data)
-            serialized_category=CategorySerializer(category).data
-            return {"message": "Category updated", "category": serialized_category}, status.HTTP_200_OK
-        return serializer.errors, status.HTTP_400_BAD_REQUEST
-        
+            category = CategoryRepository.create_category(serializer.validated_data)
+            serialized_category = CategorySerializer(category).data
+            return serialized_category
+        raise InvalidDataException(serializer.errors)
+
     @staticmethod
-    def delete_category(category_id):
-        category=CategoryRepository.get_id(category_id)
-        if category == None:
-            return {"error":"Category not found"},status.HTTP_400_BAD_REQUEST
-        
+    def update_category(check:bool, data: Dict[str, Any], category_id: str) -> Dict[str, Any] :
+        category = CategoryRepository.get_id(category_id)
+
+        if category is None:
+            raise NotFoundException("Category not found")
+
+        if check:
+            serializer = CategorySerializer(category, data=data, partial=True)
+        else:
+            serializer = CategorySerializer(category, data=data)
+
+        if serializer.is_valid():
+            category = CategoryRepository.update_category(category, serializer.validated_data)
+            serialized_category = CategorySerializer(category).data
+            return serialized_category
+        raise InvalidDataException(serializer.errors)
+    
+    @staticmethod
+    def delete_category(category_id: str) -> None:
+        category = CategoryRepository.get_id(category_id)
+        if category is None:
+            raise NotFoundException("Category not found")
+
         CategoryRepository.delete_category(category)
-        return {"message":"Category deleted Succefully"},status.HTTP_200_OK
 
     @staticmethod
-    def list_category(request):
-        page=request.GET.get('page',1)
-        categorys=CategoryRepository.get_all()
-        print(categorys)
-        page_size=3
+    def list_category(filters: Dict[str, Any], page: int, recent: int) -> Dict[str, Any]:
         
-        paginator=Paginator(categorys,page_size)
-        
+        categories = CategoryRepository.get_all()
+        page_size: int = 3
+
+        paginator = Paginator(categories, page_size)
+
         try:
-            paginated_categorys=paginator.page(page)
-            serializer=CategorySerializer(paginated_categorys,many=True)
-            
-            return {"status": True,"total_pages": paginator.num_pages,"current_page": int(page),"categorys": serializer.data},status.HTTP_200_OK
-        
+            paginated_categories = paginator.page(page)
+            serializer = CategorySerializer(paginated_categories, many=True)
+
+            return {
+                "status": True,
+                "total_pages": paginator.num_pages,
+                "current_page": int(page),
+                "categories": serializer.data,
+            }
+
         except PageNotAnInteger:
-            return {"status": False,"message": "Invalid page number"},status.HTTP_400_BAD_REQUEST
-        
+            raise InvalidDataException("Invalid page number")
+
         except EmptyPage:
-            return {"status": False,"message": "Page number out of range"},status.HTTP_404_NOT_FOUND
-        
-    
+            raise NotFoundException("Page number out of range")
+
