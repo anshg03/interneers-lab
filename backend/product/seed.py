@@ -1,5 +1,5 @@
 import mongoengine
-from product.models import ProductCategory,Product
+from product.models import ProductCategory,Product,ProductBrand
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -11,6 +11,11 @@ category_data = [
     {"title": "Home Appliances", "description": "Appliances for home use"},
 ]
 
+brand_data=[
+    {"name":"Apple","category":"Electronics"},
+    {"name":"Disha","category":"Books"}
+]
+
 
 def seed_categories():
     for category in category_data:
@@ -20,6 +25,14 @@ def seed_categories():
             logger.info(f"Category- {category['title']} is created")
         else:
             logger.info(f"Category already exist")
+            
+    for brand in brand_data:
+        existing_brand = ProductBrand.objects(name=brand["name"]).first()
+        if not existing_brand:
+            ProductBrand(**brand).save()
+            logger.info(f"Brand- {brand['name']} is created")
+        else:
+            logger.info(f"Brand already exist")
             
 def create_default_category():
     default_category,created=ProductCategory.objects.get_or_create(

@@ -1,11 +1,9 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 from ..serializers import BrandSerializer
 from product.repository.brandRepository import BrandRepository
 from product.repository.categoryRepository import CategoryRepository
-from rest_framework import status
-from rest_framework.request import Request
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from product.exceptions import NotFoundException, InvalidDataException
+from product.utils.exceptions import NotFoundException, InvalidDataException
 
 class BrandService:
     

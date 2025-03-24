@@ -1,10 +1,8 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 from ..serializers import CategorySerializer
 from product.repository.categoryRepository import CategoryRepository
-from rest_framework import status
-from rest_framework.request import Request
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from product.exceptions import InvalidDataException,NotFoundException
+from product.utils.exceptions import InvalidDataException,NotFoundException
 
 class CategoryService:
 

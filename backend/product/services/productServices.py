@@ -1,12 +1,11 @@
-from typing import Dict, Any, Tuple, List
+from typing import Dict, Any, List
 from ..serializers import ProductSerializer
 from ..repository.productRepository import ProductRepository
 from ..repository.categoryRepository import CategoryRepository
 from ..repository.brandRepository import BrandRepository
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import datetime, timezone, timedelta
-from rest_framework.request import Request
-from product.exceptions import NotFoundException, InvalidDataException
+from product.utils.exceptions import NotFoundException, InvalidDataException
 
 class ProductService:
 
