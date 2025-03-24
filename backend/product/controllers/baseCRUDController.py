@@ -2,7 +2,7 @@ from typing import Dict, Type, Any
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
-from product.exceptions import NotFoundException, InvalidDataException
+from product.utils.exceptions import NotFoundException, InvalidDataException
 from rest_framework import status
 
 

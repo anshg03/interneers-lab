@@ -9,6 +9,16 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${docker_password}
     volumes:
       - mongodb_data:/data/db
-
+  test-mongodb:
+    image: mongo:latest
+    container_name: interneers_lab_test_mongodb
+    ports:
+      - '27019:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${docker_username}
+      MONGO_INITDB_ROOT_PASSWORD: ${docker_password}
+    volumes:
+      - mongodb_test_data:/data/db
 volumes:
   mongodb_data:
+  mongodb_test_data:

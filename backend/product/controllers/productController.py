@@ -5,7 +5,7 @@ from rest_framework.request import Request
 from rest_framework import status
 from ..services.productServices import ProductService 
 from product.controllers.baseCRUDController import BaseCRUDView
-from product.exceptions import NotFoundException,InvalidDataException
+from product.utils.exceptions import NotFoundException,InvalidDataException
 
 class ProductView(BaseCRUDView):
     service: Type[ProductService]=ProductService

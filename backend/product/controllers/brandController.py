@@ -1,6 +1,4 @@
-from rest_framework.views import APIView
 from typing import Dict,Type
-from rest_framework.response import Response
 from ..services.brandServices import BrandService
 from product.controllers.baseCRUDController import BaseCRUDView
 

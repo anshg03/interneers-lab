@@ -81,7 +81,7 @@ MONGO_DB_NAME = "interneers_lab_mongodb"
 
 connect(
     db=MONGO_DB_NAME,
-    host="mongodb://root:example@localhost:27018/interneers_lab_mongodb?authSource=admin",
+    host="mongodb://root:example@localhost:27018/interneers_lab_mongodb?authSource=admin",          
     username="root",
     password="example",
     authentication_source="admin",
