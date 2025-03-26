@@ -1,6 +1,5 @@
 import mongoengine
 import os
-import django
 from product.models import ProductBrand, ProductCategory, Product
 import logging
 
@@ -8,7 +7,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_app.settings_test")
-django.setup()
 
 mongoengine.disconnect(alias="default")
 
