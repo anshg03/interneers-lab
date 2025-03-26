@@ -122,7 +122,7 @@ class ProductAPITest(APITestCase):
             self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         
         apply_time = datetime.now(timezone.utc) - timedelta(minutes=16)  
-        created_product = Product.objects.filter(name="Old Laptop").first()
+        created_product = Product.objects.using("test_db_alias").filter(name="Old Laptop").first()
         created_product.created_at = apply_time
         created_product.save()
 
@@ -131,4 +131,4 @@ class ProductAPITest(APITestCase):
         
         updated_product = Product.objects.get(id=created_product.id)
         expected_price = created_product.price - ((10 * created_product.price) / 100)
-        self.assertEqual(updated_product.price, expected_price)
+        self.assertEqual(updated_product.price, int(expected_price))
