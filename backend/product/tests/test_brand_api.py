@@ -3,10 +3,10 @@ import mongoengine
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
+from mongoengine.context_managers import switch_db
 from product.models import ProductBrand
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_app.settings_test")
-
 
 class ProductBrandAPITest(APITestCase):
    
@@ -46,34 +46,38 @@ class ProductBrandAPITest(APITestCase):
     def test_create_brand(self):
         url = reverse('product:create_brand') 
         data = {
-            "name":"Greenply",
-            "category":"Home Appliances"
+            "name": "Greenply",
+            "category": "Home Appliances"
         }
-        check_brand= ProductBrand.objects.using("test_db_alias").filter(name="Greenply").first()
-        if not check_brand:
-            response = self.client.post(url, data, format='json')
-            brand = ProductBrand.objects.using("test_db_alias").filter(name="Greenply").first()
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-            self.assertIsNotNone(brand)
 
-    
+        with switch_db(ProductBrand, "test_db_alias") as Brand:
+            existing = Brand.objects(name="Greenply").first()
+            if not existing:
+                response = self.client.post(url, data, format='json')
+                brand = Brand.objects(name="Greenply").first()
+                self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+                self.assertIsNotNone(brand)
+
     def test_update_brand(self):
-        brand = ProductBrand.objects.using("test_db_alias").filter(name="Greenply").first()
-        if brand:
-            url = reverse('product:update_brand', kwargs={'obj_id': str(brand.id)})
-            data = {"name": "Greenply"}
-            response = self.client.patch(url, data, format='json')
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with switch_db(ProductBrand, "test_db_alias") as Brand:
+            brand = Brand.objects(name="Greenply").first()
+            if brand:
+                url = reverse('product:update_brand', kwargs={'obj_id': str(brand.id)})
+                data = {"name": "Greenply"}
+                response = self.client.patch(url, data, format='json')
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_brand(self):
-        brand = ProductBrand.objects.using("test_db_alias").filter(name="Greenply").first()
-        if brand:
-            url=reverse('product:delete_brand',kwargs={'obj_id':str(brand.id)})
-            response=self.client.delete(url)
-            self.assertEqual(response.status_code,status.HTTP_204_NO_CONTENT)
-            brand = ProductBrand.objects.using("test_db_alias").filter(name="Greenply").first()
-            self.assertIsNone(brand)
-    
+        with switch_db(ProductBrand, "test_db_alias") as Brand:
+            brand = Brand.objects(name="Greenply").first()
+            if brand:
+                url = reverse('product:delete_brand', kwargs={'obj_id': str(brand.id)})
+                response = self.client.delete(url)
+                self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+                deleted = Brand.objects(id=brand.id).first()
+                self.assertIsNone(deleted)
+
     def test_list_brands(self):
         url = reverse('product:list_brand') + "?page=1&recent=0"
         response = self.client.get(url)

@@ -3,15 +3,24 @@
 import os
 import sys
 import pytest
+import subprocess
 
 def run_tests():
     print("Running tests before server startup...")
-    result = pytest.main(["-v", "--tb=short"])
-    if result != 0:
+
+    env = os.environ.copy()
+    env["TESTING"] = "true"  
+
+    result = subprocess.run(
+        ["pytest", "-v", "--tb=short"],
+        env=env
+    )
+
+    if result.returncode != 0:
         print("Some tests failed! Server will not start.")
         sys.exit(1)
+
     print("All tests passed! Starting the server...")
-    
     
 def main():
     """Run administrative tasks."""

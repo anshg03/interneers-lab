@@ -21,10 +21,10 @@ category_data = [
     {"title": "Home Appliances", "description": "Appliances for home use"},
 ]
 
-brand_data = [
-    {"name": "Apple", "category": "Electronics"},
-    {"name": "Disha", "category": "Books"}
-]
+# brand_data = [
+#     {"name": "Apple", "category": "Electronics"},
+#     {"name": "Disha", "category": "Books"}
+# ]
 
 
 def seed_categories():
@@ -36,13 +36,13 @@ def seed_categories():
         else:
             logger.info(f"Category already exists")
 
-    for brand in brand_data:
-        existing_brand = ProductBrand.objects.using("main_db_alias").filter(name=brand["name"]).first()
-        if not existing_brand:
-            ProductBrand(**brand).save(using="main_db_alias")
-            logger.info(f"Brand- {brand['name']} is created")
-        else:
-            logger.info(f"Brand already exists")
+    # for brand in brand_data:
+    #     existing_brand = ProductBrand.objects.using("main_db_alias").filter(name=brand["name"]).first()
+    #     if not existing_brand:
+    #         ProductBrand(**brand).save(using="main_db_alias")
+    #         logger.info(f"Brand- {brand['name']} is created")
+    #     else:
+    #         logger.info(f"Brand already exists")
 
 
 def create_default_category():

@@ -81,6 +81,16 @@ MONGO_DB_NAME = "interneers_lab_mongodb"
 
 connect(
     db=MONGO_DB_NAME,
+    alias="default", 
+    host="mongodb://root:example@localhost:27018/interneers_lab_mongodb?authSource=admin",
+    username="root",
+    password="example",
+    authentication_source="admin",
+)
+
+connect(
+    db=MONGO_DB_NAME,
+    alias="main_db_alias",
     host="mongodb://root:example@localhost:27018/interneers_lab_mongodb?authSource=admin",          
     username="root",
     password="example",
