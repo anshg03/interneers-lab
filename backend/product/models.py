@@ -28,7 +28,14 @@ class Product(Document):
     created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
     updated_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
     
-    meta = {"collection": "products"} 
-
+    meta = {
+        "collection": "products",
+        "indexes": [
+            {
+                "fields": ["name", "category", "brand"],
+                "unique": True
+            }
+        ]
+    }
     def __str__(self):
         return self.name
