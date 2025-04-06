@@ -5,6 +5,9 @@ type ProductTileProps = {
   name: string;
   description: string;
   price: string;
+  brand: string;
+  category: string;
+  quantity: number;
   imageUrl: string;
 };
 
@@ -13,6 +16,9 @@ const ProductTile: React.FC<ProductTileProps> = ({
   description,
   price,
   imageUrl,
+  brand,
+  category,
+  quantity,
 }) => {
   return (
     <div className="product-tile">
@@ -20,6 +26,15 @@ const ProductTile: React.FC<ProductTileProps> = ({
       <div className="product-info">
         <h2 className="product-name">{name}</h2>
         <p className="product-description">{description}</p>
+        <p>
+          <strong>Brand:</strong> {brand}
+        </p>
+        <p>
+          <strong>Category:</strong> {category}
+        </p>
+        <p>
+          <strong>In Stock:</strong> {quantity}
+        </p>
         <p className="product-price">{price}</p>
         <button className="buy-button">Buy Now</button>
       </div>

@@ -1,16 +1,18 @@
 import React from "react";
 import "./App.css";
-import ProductTile from "./ProductTile";
+// import ProductTile from "./ProductTile";
+import ProductFetcher from "ProductFetcher";
 
 function App() {
   return (
     <div className="App">
-      <ProductTile
+      <ProductFetcher />
+      {/* <ProductTile
         name="Wireless Headphones"
         description="High-quality sound, long battery life, and sleek design."
         price="$99.99"
         imageUrl="https://m.media-amazon.com/images/I/71RFdy6y6LL.AC_SX500.jpg"
-      />
+      /> */}
     </div>
   );
 }
