@@ -1,18 +1,18 @@
 import React from "react";
+import { BrowserRouter as Routes, Route } from "react-router-dom";
 import "./App.css";
-// import ProductTile from "./ProductTile";
-import ProductFetcher from "ProductFetcher";
+import Header from "./Header";
+import ProductFetcher from "./ProductFetcher";
 
 function App() {
   return (
     <div className="App">
-      <ProductFetcher />
-      {/* <ProductTile
-        name="Wireless Headphones"
-        description="High-quality sound, long battery life, and sleek design."
-        price="$99.99"
-        imageUrl="https://m.media-amazon.com/images/I/71RFdy6y6LL.AC_SX500.jpg"
-      /> */}
+      <Header />
+      <Routes>
+        <Route path="/" element={<ProductFetcher />} />
+        <Route path="/products" element={<ProductFetcher />} />
+        <Route path="/contact" element={<ProductFetcher />} />
+      </Routes>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import "./ProductTile.css";
+import { useState } from "react";
 
 type ProductTileProps = {
   name: string;
@@ -20,23 +21,35 @@ const ProductTile: React.FC<ProductTileProps> = ({
   category,
   quantity,
 }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  const handleToggle = () => setExpanded(!expanded);
+
   return (
-    <div className="product-tile">
+    <div
+      className={`product-tile ${expanded ? "expanded" : ""}`}
+      onClick={handleToggle}
+    >
       <img className="product-image" src={imageUrl} alt={name} />
       <div className="product-info">
         <h2 className="product-name">{name}</h2>
-        <p className="product-description">{description}</p>
-        <p>
-          <strong>Brand:</strong> {brand}
-        </p>
-        <p>
-          <strong>Category:</strong> {category}
-        </p>
-        <p>
-          <strong>In Stock:</strong> {quantity}
-        </p>
-        <p className="product-price">{price}</p>
-        {/* <button className="buy-button">Buy Now</button> */}
+
+        {expanded && (
+          <div className="product-details">
+            <p className="product-description">{description}</p>
+            <p>
+              <strong>Brand:</strong> {brand}
+            </p>
+            <p>
+              <strong>Category:</strong> {category}
+            </p>
+            <p>
+              <strong>In Stock:</strong> {quantity}
+            </p>
+            <p className="product-price">{price}</p>
+            <button className="buy-button">Buy Now</button>
+          </div>
+        )}
       </div>
     </div>
   );
