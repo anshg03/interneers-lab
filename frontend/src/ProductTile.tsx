@@ -36,7 +36,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
           <strong>In Stock:</strong> {quantity}
         </p>
         <p className="product-price">{price}</p>
-        <button className="buy-button">Buy Now</button>
+        {/* <button className="buy-button">Buy Now</button> */}
       </div>
     </div>
   );
