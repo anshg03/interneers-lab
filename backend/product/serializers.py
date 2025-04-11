@@ -2,8 +2,12 @@ from rest_framework import serializers
 from bson import ObjectId
 
 class CategorySerializer(serializers.Serializer):
+    id = serializers.SerializerMethodField()
     title=serializers.CharField(max_length=255)
     description = serializers.CharField()
+    
+    def get_id(self, obj):
+        return str(obj.id)
     
     def validate(self,data):
         if 'title' in data and not data['title'].strip():
@@ -33,6 +37,7 @@ class BrandSerializer(serializers.Serializer):
         return category    
         
 class ProductSerializer(serializers.Serializer):
+    id = serializers.SerializerMethodField()
     name = serializers.CharField(max_length=255)
     description = serializers.CharField()
     price = serializers.IntegerField()
@@ -41,6 +46,8 @@ class ProductSerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
     initial_quantity = serializers.IntegerField(read_only=True)
     
+    def get_id(self, obj):
+        return str(obj.id)
     
     def validate(self, data):
         special_characters = "!@#$%^&*()_+=-"
