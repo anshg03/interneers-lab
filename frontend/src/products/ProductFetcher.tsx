@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProductTile from "./ProductTile";
 
 type Product = {
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -15,7 +16,9 @@ const ProductFetcher = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8001/product/")
+    fetch("http://127.0.0.1:8001/product/", {
+      method: "GET",
+    })
       .then((res) => res.json())
       .then((data) => {
         console.log("Fetched Products:", data);
@@ -29,9 +32,10 @@ const ProductFetcher = () => {
       {products.map((product, index) => (
         <ProductTile
           key={index}
+          id={product.id}
           name={product.name}
           description={product.description}
-          price={`$${product.price}`}
+          price={`${product.price}`}
           brand={product.brand}
           category={product.category}
           quantity={product.quantity}
