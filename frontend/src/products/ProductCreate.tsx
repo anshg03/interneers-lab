@@ -10,12 +10,18 @@ type ProductFormData = {
   quantity: string;
 };
 
-const Toast: React.FC<{
+type ToastProps = {
   message: string;
   type?: "success" | "error";
   duration?: number;
-}> = ({ message, type = "success", duration = 3000 }) => {
-  const [visible, setVisible] = useState(true);
+};
+
+const Toast: React.FC<ToastProps> = ({
+  message,
+  type = "success",
+  duration = 3000,
+}) => {
+  const [visible, setVisible] = useState<boolean>(true);
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(false), duration);
@@ -43,15 +49,18 @@ const CreateProduct: React.FC = () => {
     quantity: "",
   });
 
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  ): void => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev: ProductFormData) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -72,6 +81,7 @@ const CreateProduct: React.FC = () => {
 
       const data = await response.json();
       console.log(data);
+
       if (response.ok) {
         setToastType("success");
         setToastMessage("Successfully created the product!");

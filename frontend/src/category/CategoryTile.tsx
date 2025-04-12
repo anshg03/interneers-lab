@@ -8,12 +8,18 @@ type CategoryTileProps = {
   imageUrl: string;
 };
 
-const Toast: React.FC<{
+type ToastProps = {
   message: string;
   type?: "success" | "error";
   duration?: number;
-}> = ({ message, type = "success", duration = 3000 }) => {
-  const [visible, setVisible] = useState(true);
+};
+
+const Toast: React.FC<ToastProps> = ({
+  message,
+  type = "success",
+  duration = 3000,
+}) => {
+  const [visible, setVisible] = useState<boolean>(true);
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(false), duration);
@@ -21,7 +27,7 @@ const Toast: React.FC<{
   }, [duration]);
 
   return visible ? (
-    <div className="toast">
+    <div className={`toast ${type}`}>
       <span>{message}</span>
       <div
         className="toast-timer"
@@ -31,62 +37,68 @@ const Toast: React.FC<{
   ) : null;
 };
 
+// Category Tile Component
 const CategoryTile: React.FC<CategoryTileProps> = ({
   id,
   title,
   description,
   imageUrl,
 }) => {
-  const [expanded, setExpanded] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const [expanded, setExpanded] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
-  const [formData, setFormData] = useState({
+
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+  }>({
     title,
     description,
   });
 
-  const handleToggle = () => setExpanded(!expanded);
-  const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
+  const handleToggle = (): void => setExpanded((prev) => !prev);
+  const openModal = (): void => setShowModal(true);
+  const closeModal = (): void => setShowModal(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  ): void => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    fetch(`http://127.0.0.1:8001/product/category/update/${id}/`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...formData,
-      }),
-    })
-      .then(async (res) => {
-        const data = await res.json();
+  const handleSubmit = async (): Promise<void> => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8001/product/category/update/${id}/`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        },
+      );
 
-        if (res.ok) {
-          setToastType("success");
-          setToastMessage("Successfully updated the category!");
-          closeModal();
-        } else {
-          setToastType("error");
-          setToastMessage(data?.message || "Failed to update category.");
-        }
+      const data = await response.json();
 
-        setShowToast(true);
-      })
-      .catch((err) => {
-        console.error("Update failed:", err);
+      if (response.ok) {
+        setToastType("success");
+        setToastMessage("Successfully updated the category!");
+        closeModal();
+      } else {
         setToastType("error");
-        setToastMessage("Something went wrong. Please try again.");
-        setShowToast(true);
-      });
+        setToastMessage(data?.message || "Failed to update category.");
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
+      setToastType("error");
+      setToastMessage("Something went wrong. Please try again.");
+    } finally {
+      setShowToast(true);
+    }
   };
 
   return (
@@ -113,10 +125,10 @@ const CategoryTile: React.FC<CategoryTileProps> = ({
       {showModal && (
         <div className="modal-overlay">
           <div className="modal">
-            <h3>Edit Product</h3>
+            <h3>Edit Category</h3>
             <div className="modal-form">
               <div className="form-row">
-                <label htmlFor="name">Title:</label>
+                <label htmlFor="title">Title:</label>
                 <input
                   id="title"
                   name="title"

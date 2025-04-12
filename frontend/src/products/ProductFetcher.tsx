@@ -18,51 +18,59 @@ type Category = {
   title: string;
 };
 
-const ProductFetcher = () => {
+const ProductFetcher: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8001/product/", {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Fetched Products:", data);
-        setProducts(data.products);
-        setFilteredProducts(data.products);
-      })
-      .catch((err) => console.error("Fetch Error:", err));
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("http://127.0.0.1:8001/product/");
+        const data = await res.json();
+        setProducts(data.products || []);
+        setFilteredProducts(data.products || []);
 
-    fetch("http://127.0.0.1:8001/product/category")
-      .then((res) => res.json())
-      .then((data) => setCategories(data.categories))
-      .catch((err) => console.error("Fetch Categories Error:", err));
+        const categoryRes = await fetch(
+          "http://127.0.0.1:8001/product/category",
+        );
+        const categoryData = await categoryRes.json();
+        setCategories(categoryData.categories || []);
+      } catch (err) {
+        console.error("Fetch Error:", err);
+      } finally {
+        setTimeout(() => setLoading(false), 500);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleCategoryChange = async (
     e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const category = e.target.value;
-    console.log(category);
     setSelectedCategory(category);
+    setLoading(true);
 
-    if (category === "") {
-      setFilteredProducts(products);
-    } else {
-      try {
+    try {
+      if (category === "") {
+        setFilteredProducts(products);
+      } else {
         const res = await fetch(
           `http://127.0.0.1:8001/product/product_from_category_name/${category}/`,
         );
         const data = await res.json();
-        console.log(data);
         const fetched = Array.isArray(data) ? data : [data];
         setFilteredProducts(fetched);
-      } catch (err) {
-        console.error(`Failed to fetch products for ${category}:`, err);
       }
+    } catch (err) {
+      console.error(`Failed to fetch products for ${category}:`, err);
+    } finally {
+      setTimeout(() => setLoading(false), 500);
     }
   };
 
@@ -87,19 +95,28 @@ const ProductFetcher = () => {
         </select>
       </div>
 
-      {filteredProducts.map((product, index) => (
-        <ProductTile
-          key={index}
-          id={product.id}
-          name={product.name}
-          description={product.description}
-          price={`${product.price}`}
-          brand={product.brand}
-          category={product.category}
-          quantity={product.quantity}
-          imageUrl="https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
-        />
-      ))}
+      {loading ? (
+        <div className="spinner-container">
+          <div className="spinner" />
+        </div>
+      ) : (
+        filteredProducts.map((product) => (
+          <ProductTile
+            key={product.id}
+            id={product.id}
+            name={product.name}
+            description={product.description}
+            price={`${product.price}`}
+            brand={product.brand}
+            category={product.category}
+            quantity={product.quantity}
+            imageUrl={
+              product.imageUrl ??
+              "https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
+            }
+          />
+        ))
+      )}
     </div>
   );
 };
