@@ -48,7 +48,8 @@ class ProductBrandAPITest(APITestCase):
         url = reverse('product:create_brand') 
         data = {
             "name": "Greenply",
-            "category": "Home Appliances"
+            "category": "Home Appliances",
+            "image_url":"https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

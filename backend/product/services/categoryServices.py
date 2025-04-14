@@ -7,7 +7,13 @@ from product.utils.exceptions import InvalidDataException,NotFoundException
 class CategoryService:
 
     @staticmethod
-    def create_category(data: Dict[str, Any]) -> Dict[str, Any]:
+    def create_category(data: Dict[str, Any] , image:None) -> Dict[str, Any]:
+        
+        if image:
+            from cloudinary.uploader import upload
+            uploaded = upload(image)
+            data["image_url"] = uploaded.get("secure_url")
+        
         serializer = CategorySerializer(data=data)
         if serializer.is_valid():
             category = CategoryRepository.create_category(serializer.validated_data)

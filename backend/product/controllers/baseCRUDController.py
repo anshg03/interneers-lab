@@ -49,9 +49,16 @@ class BaseCRUDView(APIView):
         )
 
     def post(self, request: Request) -> Response:
+        # print("POST /product/create/ was hit")
+        # print("Incoming data:", request.data)
+        # print("Incoming files:", request.FILES)
+        
+        data = request.data.copy()
+        image = request.FILES.get("image")
         return self.handle_request(
             getattr(self.service, self.function_mapping["create"]),
-            request.data,
+            data,
+            image,
             success_status=status.HTTP_201_CREATED,
         )
 

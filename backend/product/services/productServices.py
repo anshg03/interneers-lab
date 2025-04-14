@@ -10,7 +10,7 @@ from product.utils.exceptions import NotFoundException, InvalidDataException
 class ProductService:
 
     @staticmethod
-    def create_product(data: Dict[str, Any]) -> Dict[str, Any]:
+    def create_product(data: Dict[str, Any], image=None) -> Dict[str, Any]:
         category = CategoryRepository.get_by_name(data["category"])
         if not category:
             raise NotFoundException("Invalid category. Category does not exist")
@@ -21,6 +21,12 @@ class ProductService:
             raise NotFoundException("Invalid brand. Brand does not exist")
         data["brand"] = str(brand.id)
 
+        if image:
+            from cloudinary.uploader import upload
+            uploaded = upload(image)
+            data["image_url"] = uploaded.get("secure_url")
+        # print(11111)
+        # print(data)
         serializer = ProductSerializer(data=data)
         if serializer.is_valid():
             product = ProductRepository.create_product(serializer.validated_data)

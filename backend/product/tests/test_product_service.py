@@ -19,7 +19,7 @@ class TestProductService(unittest.TestCase):
         mock_create_product.return_value=mock_serialized_data
         
         data={"name":"Ipad","description":"Best purchase in market","price":30000,"category":"Electronics","brand":"Apple","quantity":500}
-        response=ProductService.create_product(data)
+        response=ProductService.create_product(data , image=None)
     
         self.assertEqual(response, mock_serialized_data)
         mock_get_category.assert_called_once_with("Electronics")
@@ -31,7 +31,7 @@ class TestProductService(unittest.TestCase):
         data = {"name": "iPhone", "category": "NonExistentCategory", "brand": "Apple", "price": 1000}
         
         with self.assertRaises(NotFoundException):
-            ProductService.create_product(data)
+            ProductService.create_product(data , image=None)
     
     @patch("product.repository.productRepository.ProductRepository.get_id")
     def test_update_product_not_found(self, mock_get_id):

@@ -17,7 +17,7 @@ class TestBrandService(unittest.TestCase):
         mock_create_brand.return_value = mock_serialized_data
         data = {"name": "Apple", "category": "Electronics"}
 
-        response = BrandService.create_brand(data)
+        response = BrandService.create_brand(data,image=None)
 
         self.assertEqual(response, mock_serialized_data)
         mock_get_category.assert_called_once_with("Electronics")
@@ -28,7 +28,7 @@ class TestBrandService(unittest.TestCase):
         data = {"name": "Apple", "category": "NonExistentCategory"}
 
         with self.assertRaises(InvalidDataException):
-            BrandService.create_brand(data)
+            BrandService.create_brand(data,image=None)
 
     @patch("product.repository.brandRepository.BrandRepository.get_id")
     def test_update_brand_not_found(self, mock_get_id):
