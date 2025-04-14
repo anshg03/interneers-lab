@@ -65,8 +65,7 @@ const ProductFetcher: React.FC = () => {
           `http://127.0.0.1:8001/product/product_from_category_name/${category}/`,
         );
         const data = await res.json();
-        const fetched = Array.isArray(data) ? data : [data];
-        setFilteredProducts(fetched);
+        setFilteredProducts(Array.isArray(data) && data.length > 0 ? data : []);
       }
     } catch (err) {
       console.error(`Failed to fetch products for ${category}:`, err);
@@ -100,6 +99,10 @@ const ProductFetcher: React.FC = () => {
         <div className="spinner-container">
           <div className="spinner" />
         </div>
+      ) : filteredProducts.length === 0 ? (
+        <p className="no-products-message">
+          Oops! No products in this category.
+        </p>
       ) : (
         filteredProducts.map((product) => (
           <ProductTile

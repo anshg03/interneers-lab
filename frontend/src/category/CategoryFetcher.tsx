@@ -5,10 +5,10 @@ type Category = {
   id: string;
   title: string;
   description: string;
-  imageUrl?: string;
+  image_url?: string;
 };
 
-const CategoryFetcher: React.FC = () => {
+const CategoryFetcher: React.FC = (): JSX.Element => {
   const [categorys, setCategorys] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -25,7 +25,6 @@ const CategoryFetcher: React.FC = () => {
       } catch (err) {
         console.error("Fetch Error:", err);
       } finally {
-        // Show spinner for at least 200ms for a better visual cue
         setTimeout(() => setLoading(false), 200);
       }
     };
@@ -47,7 +46,7 @@ const CategoryFetcher: React.FC = () => {
             title={category.title}
             description={category.description}
             imageUrl={
-              category.imageUrl ||
+              category.image_url ||
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpK1noS9RwpA351YDfG9dRCvSON-j5nZHU0A&s"
             }
           />

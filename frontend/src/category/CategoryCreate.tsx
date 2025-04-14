@@ -4,6 +4,7 @@ import "./CategoryCreate.css";
 type CategoryFormData = {
   title: string;
   description: string;
+  image: File | null;
 };
 
 type ToastProps = {
@@ -35,11 +36,11 @@ const Toast: React.FC<ToastProps> = ({
   ) : null;
 };
 
-// Main Component
-const CreateCategory: React.FC = () => {
+const CreateCategory: React.FC = (): JSX.Element => {
   const [formData, setFormData] = useState<CategoryFormData>({
     title: "",
     description: "",
+    image: null,
   });
 
   const [showToast, setShowToast] = useState<boolean>(false);
@@ -53,19 +54,31 @@ const CreateCategory: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const file = e.target.files?.[0] ?? null;
+    setFormData((prev) => ({ ...prev, image: file }));
+  };
+
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
     e.preventDefault();
 
+    const form = new FormData();
+    form.append("title", formData.title);
+    form.append("description", formData.description);
+    if (formData.image) {
+      form.append("image", formData.image);
+    }
+    console.log(formData);
     try {
-      const response = await fetch("http://127.0.0.1:8001/product/create/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "http://127.0.0.1:8001/product/category/create/",
+        {
+          method: "POST",
+          body: form,
         },
-        body: JSON.stringify(formData),
-      });
+      );
 
       const data = await response.json();
       console.log(data);
@@ -73,7 +86,7 @@ const CreateCategory: React.FC = () => {
       if (response.ok) {
         setToastType("success");
         setToastMessage("Successfully created the category!");
-        setFormData({ title: "", description: "" });
+        setFormData({ title: "", description: "", image: null });
       } else {
         setToastType("error");
         setToastMessage("Failed to create category.");
@@ -104,6 +117,7 @@ const CreateCategory: React.FC = () => {
         onChange={handleChange}
         required
       />
+      <input type="file" accept="image/*" onChange={handleImageChange} />
 
       <button type="submit">Create Category</button>
 
