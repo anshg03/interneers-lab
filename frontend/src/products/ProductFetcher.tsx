@@ -10,7 +10,7 @@ type Product = {
   brand: string;
   category: string;
   quantity: number;
-  imageUrl?: string;
+  image_url?: string;
 };
 
 type Category = {
@@ -31,6 +31,7 @@ const ProductFetcher: React.FC = () => {
       try {
         const res = await fetch("http://127.0.0.1:8001/product/");
         const data = await res.json();
+        console.log(data.products);
         setProducts(data.products || []);
         setFilteredProducts(data.products || []);
 
@@ -111,7 +112,7 @@ const ProductFetcher: React.FC = () => {
             category={product.category}
             quantity={product.quantity}
             imageUrl={
-              product.imageUrl ??
+              product.image_url ??
               "https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
             }
           />

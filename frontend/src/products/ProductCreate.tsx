@@ -8,6 +8,7 @@ type ProductFormData = {
   brand: string;
   category: string;
   quantity: string;
+  image: File | null;
 };
 
 type ToastProps = {
@@ -47,6 +48,7 @@ const CreateProduct: React.FC = () => {
     brand: "",
     category: "",
     quantity: "",
+    image: null,
   });
 
   const [showToast, setShowToast] = useState<boolean>(false);
@@ -66,17 +68,22 @@ const CreateProduct: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const form = new FormData();
+    form.append("name", formData.name);
+    form.append("description", formData.description);
+    form.append("price", formData.price);
+    form.append("brand", formData.brand);
+    form.append("category", formData.category);
+    form.append("quantity", formData.quantity);
+    if (formData.image) {
+      form.append("image", formData.image);
+    }
+    // console.log(form);
+    console.log(formData);
     try {
       const response = await fetch("http://127.0.0.1:8001/product/create/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          price: parseFloat(formData.price),
-          quantity: parseInt(formData.quantity),
-        }),
+        body: form,
       });
 
       const data = await response.json();
@@ -92,6 +99,7 @@ const CreateProduct: React.FC = () => {
           brand: "",
           category: "",
           quantity: "",
+          image: null,
         });
       } else {
         setToastType("error");
@@ -153,6 +161,17 @@ const CreateProduct: React.FC = () => {
         onChange={handleChange}
         required
       />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) =>
+          setFormData((prev) => ({
+            ...prev,
+            image: e.target.files?.[0] ?? null,
+          }))
+        }
+      />
+
       <button type="submit">Create Product</button>
 
       {showToast && <Toast message={toastMessage} type={toastType} />}
