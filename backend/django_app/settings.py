@@ -14,6 +14,7 @@ from pathlib import Path
 from mongoengine import connect
 from dotenv import load_dotenv
 import os
+import datetime
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -174,3 +175,8 @@ cloudinary.config(
     api_secret = os.getenv("CLOUDINARY_API_SECRET")
 )
 
+
+
+JWT_SECRET = os.getenv("JWT_SECRET_KEY")
+JWT_ALGORITHM = 'HS256'
+JWT_EXP_DELTA_SECONDS =  3600

@@ -42,3 +42,10 @@ class Product(Document):
     }
     def __str__(self):
         return self.name
+
+class User(Document):
+    username=StringField(required=True, unique=True)
+    password=StringField(required=True)
+    
+    meta={"collection": "users"}
+    

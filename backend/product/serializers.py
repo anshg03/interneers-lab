@@ -83,5 +83,20 @@ class ProductSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid brand. Brand does not exist.")
 
         return brand
-        
+
+
+class UserSignupSerializer(serializers.Serializer):
+     id=serializers.SerializerMethodField()
+     username = serializers.CharField()
+     password = serializers.CharField(write_only=True)
+     
+     def validate(self,data):
+        if 'username' in data and not data['username'].strip():
+            raise serializers.ValidationError("Username cannot be empty.")
+        return data
+
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+       
    

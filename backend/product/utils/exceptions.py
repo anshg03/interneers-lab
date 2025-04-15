@@ -3,3 +3,6 @@ class NotFoundException(Exception):
 
 class InvalidDataException(Exception):
     pass
+
+class AuthException(Exception):
+    pass

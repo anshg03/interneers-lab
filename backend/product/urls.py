@@ -2,6 +2,7 @@ from django.urls import path
 from .controllers.productController import ProductView, ProductDiscountView, ProductCategoryView
 from .controllers.categoryController import CategoryView
 from .controllers.brandController import BrandView
+from .controllers.authController import SignupView,LoginView
 
 app_name = 'product'
 
@@ -26,4 +27,9 @@ urlpatterns = [
     path('brand/create/', BrandView.as_view(), name='create_brand'),
     path('brand/update/<str:obj_id>/', BrandView.as_view(), name='update_brand'),
     path('brand/delete/<str:obj_id>/', BrandView.as_view(), name='delete_brand'),
+    
+    #Auth paths
+    path('signup',SignupView.as_view(),name="signup"),
+    path('login',LoginView.as_view(),name="login")
+    
 ]
