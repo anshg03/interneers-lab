@@ -5,14 +5,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px;
-  background-color: #007bff;
+  background-color: #3e96f5;
   color: white;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .app-title {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
 }
 
 .nav-bar {
@@ -28,5 +28,5 @@
 }
 
 .nav-bar a:hover {
-  color: #ffdd57;
+  color: #02072d;
 }

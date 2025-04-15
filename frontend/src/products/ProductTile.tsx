@@ -125,8 +125,8 @@ const ProductTile: React.FC<ProductTileProps> = ({
               <p>
                 <strong>In Stock:</strong> {quantity}
               </p>
-              <p className="product-price">
-                <span>Price :</span>
+              <p>
+                <strong>Price :</strong>
                 {price}
               </p>
               <button className="buy-button" onClick={openModal}>
