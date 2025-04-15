@@ -73,6 +73,28 @@
   background: linear-gradient(to right, #0056b3, #003f8a);
 }
 
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #ffffff;
+  color: #333;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  font-size: 14px;
+  max-width: 250px;
+  border: 1px solid #ddd;
+}
+
+.toast-timer {
+  height: 3px;
+  background-color: #2196f3;
+  margin-top: 8px;
+  animation: shrink linear forwards;
+}
+
 @media (max-width: 768px) {
   .product-tile {
     flex-direction: column;
