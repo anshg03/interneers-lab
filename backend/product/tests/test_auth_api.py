@@ -5,6 +5,7 @@ from rest_framework import status
 from django.urls import reverse
 from mongoengine.context_managers import switch_db
 from product.models import User
+from product.utils.hashing import hash_password
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_app.settings_test")
 
@@ -75,3 +76,35 @@ class UserAPITest(APITestCase):
         with switch_db(User, "test_db_alias") as user:
             user.objects(username="existinguser").delete()
 
+    def test_login_with_correct_credentials(self):
+        with switch_db(User, "test_db_alias") as user:
+            hashed = hash_password("pass123")
+            user(username="validuser", password=hashed).save()
+
+        url = reverse("product:login")
+        data = {
+            "username": "validuser",
+            "password": "pass123"
+        }
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["username"], "validuser")
+
+        with switch_db(User, "test_db_alias") as user:
+            user.objects(username="validuser").delete()
+
+    def test_login_with_incorrect_password(self):
+        with switch_db(User, "test_db_alias") as user:
+            hashed = hash_password("correctpass")
+            user(username="passuser", password=hashed).save()
+
+        url = reverse("product:login")
+        data = {
+            "username": "passuser",
+            "password": "wrongpass"
+        }
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        with switch_db(User, "test_db_alias") as user:
+            user.objects(username="passuser").delete()
