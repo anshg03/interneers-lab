@@ -1,5 +1,3 @@
-/* Header.css */
-
 .app-header {
   display: flex;
   justify-content: space-between;
@@ -17,16 +15,34 @@
 
 .nav-bar {
   display: flex;
-  gap: 20px;
+  gap: 10px;
 }
 
 .nav-bar a {
   color: white;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.3s ease;
+  padding: 6px 14px;
+  border-radius: 20px;
 }
 
 .nav-bar a:hover {
-  color: #02072d;
+  background-color: #0e69d1;
+  color: #eaeaea;
+}
+
+.logout-button {
+  background-color: #3e96f5;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  padding: 3px 7px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.logout-button:hover {
+  background-color: #0e69d1;
+  color: #eaeaea;
 }

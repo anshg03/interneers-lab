@@ -35,7 +35,7 @@
   color: #333;
 }
 
-/* These are only shown when expanded */
+/*only shown when expanded */
 .product-details {
   opacity: 0;
   max-height: 0;

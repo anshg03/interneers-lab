@@ -1,0 +1,41 @@
+.signup-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 90px;
+}
+
+.signup-form {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-form h3 {
+  margin-top: 6px;
+  font-weight: 325;
+}
+
+.signup-form h4 {
+  margin-top: 3px;
+  font-weight: 455;
+}
+
+.signup-form input,
+.signup-form button {
+  margin: 8px 0;
+  padding: 8px;
+  font-size: 20px;
+}
+
+.signup-form button {
+  background: #3e96f5;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.signup-form button:hover {
+  background: #61a9f5;
+}

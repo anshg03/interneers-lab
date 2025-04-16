@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ProductTile from "./ProductTile";
 import "./CategoryFilter.css";
+import { useNavigate } from "react-router-dom";
 
 type Product = {
   id: string;
@@ -19,6 +20,8 @@ type Category = {
 };
 
 const ProductFetcher: React.FC = () => {
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -76,23 +79,28 @@ const ProductFetcher: React.FC = () => {
 
   return (
     <div>
-      <div className="category-filter-container">
-        <label htmlFor="categoryFilter" className="category-filter-label">
-          Filter by Category:
-        </label>
-        <select
-          id="categoryFilter"
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-          className="category-filter-select"
-        >
-          <option value="">All</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.title}>
-              {cat.title}
-            </option>
-          ))}
-        </select>
+      <div className="Btw">
+        <div className="category-filter-container">
+          <label htmlFor="categoryFilter" className="category-filter-label">
+            Filter by Category:
+          </label>
+          <select
+            id="categoryFilter"
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            className="category-filter-select"
+          >
+            <option value="">All</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.title}>
+                {cat.title}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div onClick={() => navigate("/create")}>
+          <button className="create">+ Create</button>
+        </div>
       </div>
 
       {loading ? (

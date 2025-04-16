@@ -1,8 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Header.css";
 
-const Header: React.FC = () => {
+type HeaderProps = {
+  isLoggedIn: boolean;
+  setIsLoggedIn: (val: boolean) => void;
+};
+
+const Header: React.FC<HeaderProps> = ({ isLoggedIn, setIsLoggedIn }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("user_token");
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
+
   return (
     <header className="app-header">
       <h1 className="app-title">My Store</h1>
@@ -10,6 +23,16 @@ const Header: React.FC = () => {
         <Link to="/">Home</Link>
         <Link to="/category">Category</Link>
         <Link to="/products">Products</Link>
+        {isLoggedIn ? (
+          <button onClick={handleLogout} className="logout-button">
+            Logout
+          </button>
+        ) : (
+          <>
+            <Link to="/signup">Signup</Link>
+            <Link to="/login">Login</Link>
+          </>
+        )}
       </nav>
     </header>
   );
