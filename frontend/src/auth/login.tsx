@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./signup.css";
 
 type UserFormData = {
@@ -52,6 +52,11 @@ const Login: React.FC<LoginProps> = ({ setIsLoggedIn }) => {
   const [toastMessage, setToastMessage] = useState<string>("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
 
+  const location = useLocation();
+
+  const queryParams = new URLSearchParams(location.search);
+  const callbackUrl = queryParams.get("callbackUrl") || "/";
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -81,7 +86,7 @@ const Login: React.FC<LoginProps> = ({ setIsLoggedIn }) => {
           username: "",
           password: "",
         });
-        setTimeout(() => navigate("/"), 3000);
+        setTimeout(() => navigate(callbackUrl), 3000);
       } else {
         setToastType("error");
         setToastMessage("Failed to login, invalid credentials.");
@@ -120,6 +125,13 @@ const Login: React.FC<LoginProps> = ({ setIsLoggedIn }) => {
         />
 
         <button type="submit">Login</button>
+
+        <div>
+          Don't have an account?{" "}
+          <span onClick={() => navigate("/signup")} className="click">
+            Signup
+          </span>
+        </div>
         {showToast && <Toast message={toastMessage} type={toastType} />}
       </form>
     </div>

@@ -19,7 +19,7 @@ type Category = {
   title: string;
 };
 
-const ProductFetcher: React.FC = () => {
+const ProductFetcher: React.FC = (): JSX.Element => {
   const navigate = useNavigate();
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -77,6 +77,36 @@ const ProductFetcher: React.FC = () => {
     }
   };
 
+  const handleCreate = async () => {
+    const token = localStorage.getItem("user_token");
+
+    if (!token) {
+      navigate(`/login?callbackUrl=/create`);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8001/product/verify-token",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (response.ok) {
+        navigate("/create");
+      } else {
+        localStorage.removeItem("user_token");
+        navigate(`/login?callbackUrl=/create`);
+      }
+    } catch (err) {
+      console.error("Token verification failed:", err);
+      navigate(`/login?callbackUrl=/create`);
+    }
+  };
+
   return (
     <div>
       <div className="Btw">
@@ -98,7 +128,7 @@ const ProductFetcher: React.FC = () => {
             ))}
           </select>
         </div>
-        <div onClick={() => navigate("/create")}>
+        <div onClick={handleCreate}>
           <button className="create">+ Create</button>
         </div>
       </div>

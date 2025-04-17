@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CategoryTile from "./CategoryTile";
+import { useNavigate } from "react-router-dom";
 
 type Category = {
   id: string;
@@ -11,7 +12,7 @@ type Category = {
 const CategoryFetcher: React.FC = (): JSX.Element => {
   const [categorys, setCategorys] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchCategories = async (): Promise<void> => {
       setLoading(true);
@@ -32,8 +33,45 @@ const CategoryFetcher: React.FC = (): JSX.Element => {
     fetchCategories();
   }, []);
 
+  const handleCreate = async () => {
+    const token = localStorage.getItem("user_token");
+
+    if (!token) {
+      navigate(`/login?callbackUrl=/create_category`);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8001/product/verify-token",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (response.ok) {
+        navigate("/create_category");
+      } else {
+        localStorage.removeItem("user_token");
+        navigate(`/login?callbackUrl=/create_category`);
+      }
+    } catch (err) {
+      console.error("Token verification failed:", err);
+      navigate(`/login?callbackUrl=/create_category`);
+    }
+  };
+
   return (
     <div>
+      <div
+        onClick={handleCreate}
+        className="handle-button"
+        // style={{ border: "1px solid red" }}
+      >
+        <button className="create">+ Create</button>
+      </div>
       {loading ? (
         <div className="spinner-container">
           <div className="spinner" />

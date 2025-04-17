@@ -30,3 +30,16 @@ class LoginView(APIView):
                 {"error": "Something went wrong", "details": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+            
+class VerifyTokenView(APIView):
+    def get(self,request:Request) ->Response:
+        try:
+            response=AuthService.verify_token(request.headers.get("Authorization"))
+            return Response(response, status=status.HTTP_200_OK)
+        except AuthException as e:
+            return Response({"error":str(e)},status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response(
+                {"error": "Something went wrong", "details": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

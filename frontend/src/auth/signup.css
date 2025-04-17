@@ -39,3 +39,8 @@
 .signup-form button:hover {
   background: #61a9f5;
 }
+
+.click {
+  color: #3e96f5;
+  cursor: pointer;
+}

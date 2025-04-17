@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./CategoryTile.css";
+import { useNavigate } from "react-router-dom";
 
 type CategoryTileProps = {
   id: string;
@@ -42,13 +43,14 @@ const CategoryTile: React.FC<CategoryTileProps> = ({
   title,
   description,
   imageUrl,
-}) => {
+}): JSX.Element => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
 
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
@@ -58,7 +60,35 @@ const CategoryTile: React.FC<CategoryTileProps> = ({
   });
 
   const handleToggle = (): void => setExpanded((prev) => !prev);
-  const openModal = (): void => setShowModal(true);
+  const openModal = async () => {
+    const token = localStorage.getItem("user_token");
+
+    if (!token) {
+      navigate(`/login?callbackUrl=/category`);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8001/product/verify-token",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (response.ok) {
+        setShowModal(true);
+      } else {
+        localStorage.removeItem("user_token");
+        navigate(`/login?callbackUrl=/category`);
+      }
+    } catch (err) {
+      console.error("Token verification failed:", err);
+      navigate(`/login?callbackUrl=/category`);
+    }
+  };
   const closeModal = (): void => setShowModal(false);
 
   const handleChange = (

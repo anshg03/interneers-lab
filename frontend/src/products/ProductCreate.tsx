@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ProductCreate.css";
 
 type ProductFormData = {
@@ -40,7 +41,7 @@ const Toast: React.FC<ToastProps> = ({
   ) : null;
 };
 
-const CreateProduct: React.FC = () => {
+const CreateProduct: React.FC = (): JSX.Element => {
   const [formData, setFormData] = useState<ProductFormData>({
     name: "",
     description: "",
@@ -50,6 +51,8 @@ const CreateProduct: React.FC = () => {
     quantity: "",
     image: null,
   });
+
+  const navigate = useNavigate();
 
   const [showToast, setShowToast] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
@@ -68,6 +71,12 @@ const CreateProduct: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const token = localStorage.getItem("user_token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     const form = new FormData();
     form.append("name", formData.name);
     form.append("description", formData.description);

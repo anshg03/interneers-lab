@@ -51,7 +51,7 @@ class CategoryService:
     def list_category(filters: Dict[str, Any], page: int, recent: int) -> Dict[str, Any]:
         
         categories = CategoryRepository.get_all()
-        page_size: int = 5
+        page_size: int = 3
 
         paginator = Paginator(categories, page_size)
 

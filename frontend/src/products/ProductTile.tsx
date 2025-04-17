@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ProductTile.css";
+import { useNavigate } from "react-router-dom";
 
 type ProductTileProps = {
   id: string;
@@ -44,7 +45,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
   brand,
   category,
   quantity,
-}) => {
+}): JSX.Element => {
   const [expanded, setExpanded] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -58,9 +59,37 @@ const ProductTile: React.FC<ProductTileProps> = ({
     category,
     quantity,
   });
-
+  const navigate = useNavigate();
   const handleToggle = () => setExpanded(!expanded);
-  const openModal = () => setShowModal(true);
+  const openModal = async () => {
+    const token = localStorage.getItem("user_token");
+
+    if (!token) {
+      navigate(`/login?callbackUrl=/`);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8001/product/verify-token",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (response.ok) {
+        setShowModal(true);
+      } else {
+        localStorage.removeItem("user_token");
+        navigate(`/login?callbackUrl=/`);
+      }
+    } catch (err) {
+      console.error("Token verification failed:", err);
+      navigate(`/login?callbackUrl=/`);
+    }
+  };
   const closeModal = () => setShowModal(false);
 
   const handleChange = (

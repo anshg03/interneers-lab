@@ -111,6 +111,13 @@ const Signup: React.FC = () => {
         />
 
         <button type="submit">Signup</button>
+
+        <div>
+          Already have an account?{" "}
+          <span onClick={() => navigate("/login")} className="click">
+            Login
+          </span>
+        </div>
         {showToast && <Toast message={toastMessage} type={toastType} />}
       </form>
     </div>

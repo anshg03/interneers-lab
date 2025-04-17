@@ -1,6 +1,6 @@
 from product.repository.authRepository import AuthRepository
 from product.utils.hashing import hash_password, check_password
-from product.utils.jwt import generate_jwt_token
+from product.utils.jwt import generate_jwt_token,decode_jwt_token
 from product.serializers import UserSignupSerializer, UserLoginSerializer
 from product.utils.exceptions import AuthException,InvalidDataException
 from typing import Dict,Any
@@ -51,3 +51,19 @@ class AuthService:
                 "username": user.username
             }
         raise InvalidDataException(serializer.errors)
+
+    @staticmethod
+    def verify_token(auth_header: str) -> Dict[str, Any]:
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise AuthException("Authorization token is missing or invalid")
+
+        token = auth_header.split(" ")[1]
+
+        try:
+            payload = decode_jwt_token(token)
+            return {
+                "message": "Token is valid",
+                "user_id": payload["user_id"]
+            }
+        except Exception as e:
+            raise AuthException(str(e))

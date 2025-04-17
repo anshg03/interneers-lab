@@ -2,7 +2,7 @@ from django.urls import path
 from .controllers.productController import ProductView, ProductDiscountView, ProductCategoryView
 from .controllers.categoryController import CategoryView
 from .controllers.brandController import BrandView
-from .controllers.authController import SignupView,LoginView
+from .controllers.authController import SignupView,LoginView,VerifyTokenView
 
 app_name = 'product'
 
@@ -30,6 +30,7 @@ urlpatterns = [
     
     #Auth paths
     path('signup',SignupView.as_view(),name="signup"),
-    path('login',LoginView.as_view(),name="login")
+    path('login',LoginView.as_view(),name="login"),
+    path('verify-token',VerifyTokenView.as_view(),name="verify-token")
     
 ]

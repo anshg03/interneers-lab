@@ -18,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, setIsLoggedIn }) => {
 
   return (
     <header className="app-header">
-      <h1 className="app-title">My Store</h1>
+      <h1 className="app-title">Inventory</h1>
       <nav className="nav-bar">
         <Link to="/">Home</Link>
         <Link to="/category">Category</Link>
