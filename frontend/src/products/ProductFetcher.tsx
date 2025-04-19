@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProductTile from "./ProductTile";
 import "./CategoryFilter.css";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 type Product = {
   id: string;
@@ -21,6 +22,7 @@ type Category = {
 
 const ProductFetcher: React.FC = (): JSX.Element => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -128,9 +130,11 @@ const ProductFetcher: React.FC = (): JSX.Element => {
             ))}
           </select>
         </div>
-        <div onClick={handleCreate}>
-          <button className="create">+ Create</button>
-        </div>
+        {location.pathname === "/products" && (
+          <div onClick={handleCreate}>
+            <button className="create">+ Create</button>
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -156,6 +160,7 @@ const ProductFetcher: React.FC = (): JSX.Element => {
               product.image_url ??
               "https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
             }
+            currentPath={location.pathname}
           />
         ))
       )}

@@ -11,6 +11,7 @@ type ProductTileProps = {
   category: string;
   quantity: number;
   imageUrl: string;
+  currentPath: string;
 };
 
 const Toast: React.FC<{
@@ -45,6 +46,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
   brand,
   category,
   quantity,
+  currentPath,
 }): JSX.Element => {
   const [expanded, setExpanded] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -61,6 +63,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
   });
   const navigate = useNavigate();
   const handleToggle = () => setExpanded(!expanded);
+
   const openModal = async () => {
     const token = localStorage.getItem("user_token");
 
@@ -88,6 +91,53 @@ const ProductTile: React.FC<ProductTileProps> = ({
     } catch (err) {
       console.error("Token verification failed:", err);
       navigate(`/login?callbackUrl=/`);
+    }
+  };
+
+  const handledelete = async () => {
+    const token = localStorage.getItem("user_token");
+
+    if (!token) {
+      navigate(`/login?callbackUrl=/products`);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8001/product/verify-token",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (response.ok) {
+        const delResponse = await fetch(
+          `http://127.0.0.1:8001/product/delete/${id}/`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (delResponse.status === 204) {
+          setToastType("success");
+          setToastMessage("Successfully deleted the product!");
+        } else {
+          setToastType("error");
+          setToastMessage("Failed to delete product.");
+        }
+        setShowToast(true);
+      } else {
+        localStorage.removeItem("user_token");
+        navigate(`/login?callbackUrl=/products`);
+      }
+    } catch (err) {
+      console.error("Token verification failed:", err);
+      navigate(`/login?callbackUrl=/products`);
     }
   };
   const closeModal = () => setShowModal(false);
@@ -158,9 +208,16 @@ const ProductTile: React.FC<ProductTileProps> = ({
                 <strong>Price :</strong>
                 {price}
               </p>
-              <button className="buy-button" onClick={openModal}>
-                Update Details
-              </button>
+              {currentPath === "/products" && (
+                <div className="btw-btn">
+                  <button className="buy-button" onClick={openModal}>
+                    Update Details
+                  </button>
+                  <button className="buy-button-del" onClick={handledelete}>
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

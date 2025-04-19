@@ -73,6 +73,31 @@
   background: linear-gradient(to right, #0056b3, #003f8a);
 }
 
+.buy-button-del {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background: linear-gradient(to right, #f60808, #f60808);
+  border: none;
+  color: white;
+  font-size: 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.buy-button-del:hover {
+  background: linear-gradient(to right, #cb0505, #cb0505);
+}
+
+.btw-btn {
+  display: flex;
+  gap: 125px;
+  margin-top: 10px;
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
 .toast {
   position: fixed;
   top: 20px;
