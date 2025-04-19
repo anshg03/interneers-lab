@@ -8,6 +8,7 @@ import CategoryFetcher from "category/CategoryFetcher";
 import CreateCategory from "category/CategoryCreate";
 import Signup from "auth/signup";
 import Login from "auth/login";
+import Report from "reports/ProductCount";
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,6 +32,7 @@ const App: React.FC = () => {
           path="/login"
           element={<Login setIsLoggedIn={setIsLoggedIn} />}
         />
+        <Route path="/reports" element={<Report />} />
       </Routes>
     </div>
   );
