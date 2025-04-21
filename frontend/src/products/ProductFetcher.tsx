@@ -29,12 +29,14 @@ const ProductFetcher: React.FC = (): JSX.Element => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const queryParameters = new URLSearchParams(window.location.search);
+  const page = queryParameters.get("page") || 1;
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await fetch("http://127.0.0.1:8001/product/");
+        const res = await fetch(`http://127.0.0.1:8001/product/?page=${page}`);
         const data = await res.json();
         console.log(data.products);
         setProducts(data.products || []);
@@ -53,7 +55,7 @@ const ProductFetcher: React.FC = (): JSX.Element => {
     };
 
     fetchData();
-  }, []);
+  }, [page]);
 
   const handleCategoryChange = async (
     e: React.ChangeEvent<HTMLSelectElement>,

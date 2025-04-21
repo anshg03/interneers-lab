@@ -68,7 +68,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
     const token = localStorage.getItem("user_token");
 
     if (!token) {
-      navigate(`/login?callbackUrl=/`);
+      navigate(`/login?callbackUrl=/products`);
       return;
     }
 
@@ -86,11 +86,11 @@ const ProductTile: React.FC<ProductTileProps> = ({
         setShowModal(true);
       } else {
         localStorage.removeItem("user_token");
-        navigate(`/login?callbackUrl=/`);
+        navigate(`/login?callbackUrl=/products`);
       }
     } catch (err) {
       console.error("Token verification failed:", err);
-      navigate(`/login?callbackUrl=/`);
+      navigate(`/login?callbackUrl=/products`);
     }
   };
 

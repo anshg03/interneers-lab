@@ -13,13 +13,19 @@ const CategoryFetcher: React.FC = (): JSX.Element => {
   const [categorys, setCategorys] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const queryParameters = new URLSearchParams(window.location.search);
+  const page = queryParameters.get("page") || 1;
+
   useEffect(() => {
     const fetchCategories = async (): Promise<void> => {
       setLoading(true);
       try {
-        const res = await fetch("http://127.0.0.1:8001/product/category", {
-          method: "GET",
-        });
+        const res = await fetch(
+          `http://127.0.0.1:8001/product/category?page=${page}`,
+          {
+            method: "GET",
+          },
+        );
         const data = await res.json();
         console.log("Fetched Categories:", data);
         setCategorys(data.categories);
@@ -31,7 +37,7 @@ const CategoryFetcher: React.FC = (): JSX.Element => {
     };
 
     fetchCategories();
-  }, []);
+  }, [page]);
 
   const handleCreate = async () => {
     const token = localStorage.getItem("user_token");
