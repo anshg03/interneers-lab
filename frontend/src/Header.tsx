@@ -21,8 +21,8 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, setIsLoggedIn }) => {
       <h1 className="app-title">Inventory</h1>
       <nav className="nav-bar">
         <Link to="/">Home</Link>
-        <Link to="/category">Category</Link>
         <Link to="/products">Products</Link>
+        <Link to="/category">Category</Link>
         <Link to="/reports">Report</Link>
         {isLoggedIn ? (
           <button onClick={handleLogout} className="logout-button">

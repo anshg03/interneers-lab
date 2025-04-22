@@ -12,6 +12,7 @@ type ProductTileProps = {
   quantity: number;
   imageUrl: string;
   currentPath: string;
+  fetchUpdatedProducts: () => void;
 };
 
 const Toast: React.FC<{
@@ -47,6 +48,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
   category,
   quantity,
   currentPath,
+  fetchUpdatedProducts,
 }): JSX.Element => {
   const [expanded, setExpanded] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -167,6 +169,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
           setToastType("success");
           setToastMessage("Successfully updated the product!");
           closeModal();
+          setTimeout(() => fetchUpdatedProducts(), 3000);
         } else {
           setToastType("error");
           setToastMessage(data?.message || "Failed to update product.");

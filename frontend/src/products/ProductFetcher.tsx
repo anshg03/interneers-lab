@@ -29,33 +29,44 @@ const ProductFetcher: React.FC = (): JSX.Element => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const queryParameters = new URLSearchParams(window.location.search);
-  const page = queryParameters.get("page") || 1;
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
+  const fetchProducts = async (pageNum: number) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:8001/product/?page=${pageNum}`);
+      const data = await res.json();
+      console.log(data);
+      // if (pageNum === 1) {
+      setProducts(data.products || []);
+      setFilteredProducts(data.products || []);
+      // } else {
+      //   setProducts((prev) => [...prev, ...(data.products || [])]);
+      //   setFilteredProducts((prev) => [...prev, ...(data.products || [])]);
+      // }
+
+      setHasMore(pageNum < data.total_pages);
+
+      const categoryRes = await fetch("http://127.0.0.1:8001/product/category");
+      const categoryData = await categoryRes.json();
+      setCategories(categoryData.categories || []);
+    } catch (err) {
+      console.error("Fetch Error:", err);
+    } finally {
+      setTimeout(() => setLoading(false), 500);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(`http://127.0.0.1:8001/product/?page=${page}`);
-        const data = await res.json();
-        console.log(data.products);
-        setProducts(data.products || []);
-        setFilteredProducts(data.products || []);
-
-        const categoryRes = await fetch(
-          "http://127.0.0.1:8001/product/category",
-        );
-        const categoryData = await categoryRes.json();
-        setCategories(categoryData.categories || []);
-      } catch (err) {
-        console.error("Fetch Error:", err);
-      } finally {
-        setTimeout(() => setLoading(false), 500);
-      }
-    };
-
-    fetchData();
+    fetchProducts(page);
   }, [page]);
+
+  const handleNextPage = () => {
+    if (hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  };
 
   const handleCategoryChange = async (
     e: React.ChangeEvent<HTMLSelectElement>,
@@ -163,8 +174,17 @@ const ProductFetcher: React.FC = (): JSX.Element => {
               "https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
             }
             currentPath={location.pathname}
+            fetchUpdatedProducts={() => fetchProducts(Number(page))}
           />
         ))
+      )}
+
+      {hasMore && !loading && (
+        <div className="slider-btn-container">
+          <button onClick={handleNextPage} className="slider-btn">
+            Next Page
+          </button>
+        </div>
       )}
     </div>
   );
