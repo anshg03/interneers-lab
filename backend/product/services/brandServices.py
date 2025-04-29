@@ -8,12 +8,17 @@ from product.utils.exceptions import NotFoundException, InvalidDataException
 class BrandService:
     
     @staticmethod
-    def create_brand(data: Dict[str, Any]) -> Dict[str, Any]:
+    def create_brand(data: Dict[str, Any], image:None) -> Dict[str, Any]:
         category = CategoryRepository.get_by_name(data["category"]) 
         if category is None:
             raise InvalidDataException("Invalid category. Category does not exist")
         
         data["category"] = str(category.id)
+        
+        if image:
+            from cloudinary.uploader import upload
+            uploaded = upload(image)
+            data["image_url"] = uploaded.get("secure_url")
         
         serializer = BrandSerializer(data=data)
         if serializer.is_valid():

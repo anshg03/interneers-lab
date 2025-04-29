@@ -5,6 +5,7 @@ class CategorySerializer(serializers.Serializer):
     id = serializers.SerializerMethodField()
     title=serializers.CharField(max_length=255)
     description = serializers.CharField()
+    image_url = serializers.CharField(required=False)
     
     def get_id(self, obj):
         return str(obj.id)
@@ -20,6 +21,7 @@ class CategorySerializer(serializers.Serializer):
 class BrandSerializer(serializers.Serializer):
     category=serializers.CharField()
     name=serializers.CharField()
+    image_url = serializers.CharField(required=False)
     
     def validate_name(self,value):
         if not value.strip():
@@ -45,6 +47,7 @@ class ProductSerializer(serializers.Serializer):
     brand = serializers.CharField(max_length=100)
     quantity = serializers.IntegerField()
     initial_quantity = serializers.IntegerField(read_only=True)
+    image_url = serializers.CharField(required=False)
     
     def get_id(self, obj):
         return str(obj.id)

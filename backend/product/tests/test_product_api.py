@@ -54,7 +54,8 @@ class ProductAPITest(APITestCase):
             "category": "Electronics",
             "brand": "Apple",
             "price": 9999,
-            "quantity": 300
+            "quantity": 300,
+            "image_url":"https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
         }
         response = self.client.post(url, data, format='json')
         with switch_db(Product, "test_db_alias") as ProductModel:
@@ -79,7 +80,8 @@ class ProductAPITest(APITestCase):
                 brand=str(brand.id),
                 price=12000,
                 quantity=50,
-                initial_quantity=50
+                initial_quantity=50,
+                image_url="https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
             ).save()
             
         url = reverse('product:create_product')
@@ -89,7 +91,8 @@ class ProductAPITest(APITestCase):
             "category": "Electronics",
             "brand": "Apple",
             "price": 12000,
-            "quantity": 50
+            "quantity": 50,
+            "image_url":"https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)

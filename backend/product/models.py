@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 class ProductCategory(Document):
     title=StringField(max_length=255,unique=True)
     description=StringField()
+    image_url = StringField()
     
     def __str__(self):
         return self.title
@@ -12,6 +13,7 @@ class ProductCategory(Document):
 class ProductBrand(Document):
     category=ReferenceField(ProductCategory,required=True,reverse_delete_rule=CASCADE)
     name=StringField()
+    image_url = StringField()
     
     def __str__(self):
         return self.name
@@ -27,6 +29,7 @@ class Product(Document):
     initial_quantity=IntField(editable=False)
     created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
     updated_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
+    image_url = StringField()
     
     meta = {
         "collection": "products",

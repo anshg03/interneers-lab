@@ -49,7 +49,8 @@ class ProductCategoryAPITest(APITestCase):
         url = reverse('product:create_category') 
         data = {
             "title": "Sports",
-            "description": "Good Company"
+            "description": "Good Company",
+            "image_url":"https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -60,12 +61,13 @@ class ProductCategoryAPITest(APITestCase):
 
     def test_create_category_when_exists(self):
         with switch_db(ProductCategory,"test_db_alias") as Category:
-            category=Category(title="TestCategory", description="Good Company").save()
+            category=Category(title="TestCategory", description="Good Company",image_url="https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg").save()
             
         url = reverse('product:create_category')
         data = {
             "title": "TestCategory",
-            "description": "Good Company"
+            "description": "Good Company",
+            "image_url":"https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
         }
 
         response = self.client.post(url, data, format='json')

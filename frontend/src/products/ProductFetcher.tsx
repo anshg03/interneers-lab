@@ -10,7 +10,7 @@ type Product = {
   brand: string;
   category: string;
   quantity: number;
-  imageUrl?: string;
+  image_url?: string;
 };
 
 type Category = {
@@ -31,6 +31,7 @@ const ProductFetcher: React.FC = () => {
       try {
         const res = await fetch("http://127.0.0.1:8001/product/");
         const data = await res.json();
+        console.log(data.products);
         setProducts(data.products || []);
         setFilteredProducts(data.products || []);
 
@@ -64,8 +65,7 @@ const ProductFetcher: React.FC = () => {
           `http://127.0.0.1:8001/product/product_from_category_name/${category}/`,
         );
         const data = await res.json();
-        const fetched = Array.isArray(data) ? data : [data];
-        setFilteredProducts(fetched);
+        setFilteredProducts(Array.isArray(data) && data.length > 0 ? data : []);
       }
     } catch (err) {
       console.error(`Failed to fetch products for ${category}:`, err);
@@ -99,6 +99,10 @@ const ProductFetcher: React.FC = () => {
         <div className="spinner-container">
           <div className="spinner" />
         </div>
+      ) : filteredProducts.length === 0 ? (
+        <p className="no-products-message">
+          Oops! No products in this category.
+        </p>
       ) : (
         filteredProducts.map((product) => (
           <ProductTile
@@ -111,7 +115,7 @@ const ProductFetcher: React.FC = () => {
             category={product.category}
             quantity={product.quantity}
             imageUrl={
-              product.imageUrl ??
+              product.image_url ??
               "https://cdn.oreillystatic.com/oreilly/images/device-image4-800x600-20210224.jpg"
             }
           />

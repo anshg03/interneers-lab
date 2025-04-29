@@ -12,7 +12,7 @@ class TestCategoryService(unittest.TestCase):
     def test_create_category(self, mock_serialized_data, mock_validated_data, mock_is_valid, mock_create_category):
         mock_create_category.return_value = mock_serialized_data
         data = {"title": "Electronics", "description": "Electronic gadgets and accessories"}
-        response = CategoryService.create_category(data)
+        response = CategoryService.create_category(data , image=None)
         self.assertEqual(response, mock_serialized_data)
         mock_create_category.assert_called_once_with(mock_validated_data)
 

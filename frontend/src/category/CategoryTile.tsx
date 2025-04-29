@@ -37,7 +37,6 @@ const Toast: React.FC<ToastProps> = ({
   ) : null;
 };
 
-// Category Tile Component
 const CategoryTile: React.FC<CategoryTileProps> = ({
   id,
   title,
